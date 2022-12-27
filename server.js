@@ -24,6 +24,6 @@ app.get('/', (req, res) => {
 
 app.use(cors({credentials: true, origin: true}));
 
-app.listen(port, () => {
+app.listen(process.env.PORT||port, () => {
   console.log(`Example app listening on port ${port}`)
 })
