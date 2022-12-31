@@ -175,10 +175,10 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         .selectAll("dot")
         .data(data)
         .join("circle")
-        .attr("cx", function (d) { return x((d.x)); })
-        .attr("cy", function (d) { return y(d.carat); })
+        .attr("cx", function (d) { return x((d.depth/10)); })
+        .attr("cy", function (d) { return y(d.y); })
         .attr("r", 4)
-        .style("fill", "blue")
+        .style("fill", "red")
         .style("stroke", "black");
 
 
@@ -201,10 +201,10 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         .selectAll("dot")
         .data(data)
         .join("circle")
-        .attr("cx", function (d) { return x((d.x)); })
-        .attr("cy", function (d) { return y(d.carat); })
+        .attr("cx", function (d) { return x((d.depth/10)); })
+        .attr("cy", function (d) { return y(d.z); })
         .attr("r", 4)
-        .style("fill", "blue")
+        .style("fill", "green")
         .style("stroke", "black");
 
     const x6 = d3.scaleLinear()
@@ -226,7 +226,7 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         .selectAll("dot")
         .data(data)
         .join("circle")
-        .attr("cx", function (d) { return x((d.x)); })
+        .attr("cx", function (d) { return x((d.depth/10)); })
         .attr("cy", function (d) { return y(d.carat); })
         .attr("r", 4)
         .style("fill", "blue")
@@ -237,22 +237,23 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         .range([height, 0]);
     svg7.append("g")
         .call(d3.axisLeft(y));
-
     const x7 = d3.scaleLinear()
         .domain([0, 12])
-        .range([height, 0]);
+        .range([0, width]);
     svg7.append("g")
-        .call(d3.axisLeft(x));
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x));
+
 
     // Add dots
     svg7.append('g')
         .selectAll("dot")
         .data(data)
         .join("circle")
-        .attr("cx", function (d) { return x((d.x)); })
-        .attr("cy", function (d) { return y(d.carat); })
+        .attr("cx", function (d) { return x((d.table/10)); })
+        .attr("cy", function (d) { return y(d.y); })
         .attr("r", 4)
-        .style("fill", "blue")
+        .style("fill", "red")
         .style("stroke", "black");
 
 
@@ -275,10 +276,10 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         .selectAll("dot")
         .data(data)
         .join("circle")
-        .attr("cx", function (d) { return x((d.x)); })
-        .attr("cy", function (d) { return y(d.carat); })
+        .attr("cx", function (d) { return x((d.table/10)); })
+        .attr("cy", function (d) { return y(d.z); })
         .attr("r", 4)
-        .style("fill", "blue")
+        .style("fill", "green")
         .style("stroke", "black");
 
     const x9 = d3.scaleLinear()
@@ -300,7 +301,7 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         .selectAll("dot")
         .data(data)
         .join("circle")
-        .attr("cx", function (d) { return x((d.x)); })
+        .attr("cx", function (d) { return x((d.table/10)); })
         .attr("cy", function (d) { return y(d.carat); })
         .attr("r", 4)
         .style("fill", "blue")
