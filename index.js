@@ -1,4 +1,3 @@
-const { map } = require("d3");
 
 var maxX;
 var maxY;
@@ -588,19 +587,19 @@ function findMaxOfArray(data, datapoint){
 }
 
 function getDatapoints(data){
-    map = new Map();
+    array2 = [];
     array = Object.keys(data[0]);
     for(var item in array){
         var x = data[0][array[item]];
         x = Number(x);
         if(!isNaN(x)){
-            map.set(array[item], x);
+            array2.push(array[item]);
         }
     }
     //array2 = [...map.keys()];
     //console.log(array2);
     //console.log(map);
-    return map;
+    return array2;
   
 }
 
