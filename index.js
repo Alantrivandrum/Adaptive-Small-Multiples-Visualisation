@@ -1,3 +1,4 @@
+const { map } = require("d3");
 
 var maxX;
 var maxY;
@@ -266,7 +267,7 @@ const svg = d3.select("#my_dataviz")
 //Read the data
 d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv").then(function (data) {
     findMax(data);
-    console.log(maxY);
+    //console.log(maxY);
     // Add X axis
     /*
     const x = d3.scaleLinear()
@@ -582,10 +583,37 @@ function findMaxOfArray(data, datapoint){
         max = data[i][datapoint];
      } 
     }
-    console.log(max);
+    //console.log(max);
     return max;
 }
 
 function getDatapoints(data){
-    console.log(Object.keys(data[0]));
+    map = new Map();
+    array = Object.keys(data[0]);
+    for(var item in array){
+        var x = data[0][array[item]];
+        x = Number(x);
+        if(!isNaN(x)){
+            map.set(array[item], x);
+        }
+    }
+    //array2 = [...map.keys()];
+    //console.log(array2);
+    //console.log(map);
+    return map;
+  
+}
+
+function buttonFunction1(){
+    document.getElementById("my_dataviz").innerHTML = "";
+    d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv").then(function (data) {
+    makeScatterPlot("z", "y", data, "#my_dataviz", "green");
+    })
+}
+
+function buttonFunction2(){
+    document.getElementById("my_dataviz").innerHTML = "";
+    d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv").then(function (data) {
+    makeScatterPlot("x", "y", data, "#my_dataviz", "red");
+    })
 }
