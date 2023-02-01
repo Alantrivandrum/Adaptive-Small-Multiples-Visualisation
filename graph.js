@@ -63,3 +63,5 @@ function makeScatterPlot(data1 ,data2, dataset){
 function findMaxOfArray(data){
     return Math.max(...data)
 }
+
+

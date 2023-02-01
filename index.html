@@ -16,19 +16,20 @@
 
 
 <!-- Create a div where the graph will take place -->
-<div>
+<div id = main>
     <div id = my_dataviz></div>
     <div id = my_dataviz2> </div>
     <div id = my_dataviz3> </div>
-    <button type="button" onclick="buttonFunction1()">Click Me!</button>
-    <button type="button" onclick="buttonFunction2()">Click Me!</button>
-    <h3>Please select an option:</h3>
+    <button type="button" onclick="buttonFunction1()" class = databutton >Click Me!</button>
+    <button type="button" onclick="buttonFunction2()" class = databutton >Click Me!</button>
+    <!-- <textarea id="dataset_link"></textarea> -->
+    <!-- <h3>Please select an option:</h3>
     <ul>
       <li><input type="radio" name="option" value="Option 1">Option 1</li>
       <li><input type="radio" name="option" value="Option 2">Option 2</li>
       <li><input type="radio" name="option" value="Option 3">Option 3</li>
     </ul>
-    <button id="submit-btn">Submit</button>
+    <button id="submit-btn">Submit</button> -->
 </div>
 <div>
     <div id = my_dataviz4></div>
@@ -49,7 +50,6 @@
 <script src="https://d3js.org/d3.v6.js" ></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js" integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="index.js" ></script>
-
 </body>
 
 

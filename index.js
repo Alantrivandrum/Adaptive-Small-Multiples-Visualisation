@@ -294,6 +294,8 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         .style("fill", "red")
         .style("stroke", "black");
 */
+        let arrayOfDataPoints = getDatapoints(data);
+        createButtons(arrayOfDataPoints);
     	makeScatterPlot("x", "y", data, "#my_dataviz", "red");
         makeScatterPlot("x", "z", data, "#my_dataviz2", "green");
         makeScatterPlot("x", "carat", data, "#my_dataviz3", "blue");
@@ -303,7 +305,7 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
         makeScatterPlot("table", "y", data, "#my_dataviz7", "red");
         makeScatterPlot("table", "z", data, "#my_dataviz8", "green");
         makeScatterPlot("table", "carat", data, "#my_dataviz9", "blue");
-        getDatapoints(data);
+
         //findMaxOfArray(data,"x");
 
     // // Add X axis
@@ -615,4 +617,20 @@ function buttonFunction2(){
     d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv").then(function (data) {
     makeScatterPlot("x", "y", data, "#my_dataviz", "red");
     })
+}
+
+
+
+function createButtons(array){
+    for(var item in array){
+        let btn = document.createElement("button");
+        btn.innerHTML = array[item];
+        btn.type = "text";
+        btn.name = array[item];
+        btn.className = "databutton";
+        btn.onclick = function () {
+            alert("Button is clicked");
+          };
+        document.body.appendChild(btn);
+    }
 }
