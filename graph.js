@@ -1,23 +1,36 @@
-//this function takes in two strings that determine the x and y axes based on attributes within dataset
-// x=data1, y = data2 
-function makeScatterPlot(data1 ,data2, dataset){
-    // set the dimensions and margins of the graph
-    const margin = { top: 10, right: 30, bottom: 30, left: 60 },
+const margin = { top: 10, right: 30, bottom: 30, left: 60 },
     width = 350 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
-    const svg = d3.select("#my_dataviz")
+
+    let zoom = d3.zoom()
+	.scaleExtent([0.25, 10])
+	.on('zoom', handleZoom);
+
+//this function takes in two strings that determine the x and y axes based on attributes within dataset
+// x=data1, y = data2 
+function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
+
+
+// function initZoom() {
+// 	d3.select('svg#svg9')
+// 		.call(zoom);
+// }
+
+
+    const svg = d3.select(cssId)
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
+    .attr("id", ""+id)
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
-    .attr(x, width/2)
-    .attr(y, height+30)
+    .attr("x", width/2)
+    .attr("y", height+30)
     .text(data1);
 
     svg.append("text")
@@ -28,9 +41,11 @@ function makeScatterPlot(data1 ,data2, dataset){
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
     .text(data2);
+
+    svg.call(zoom);
     
-    maxData1 = findMaxOfArray(dataset[data1]);
-    maxData2 = findMaxOfArray(dataset[data2]);
+    maxData1 = findMaxOfArray(dataset,data1);
+    maxData2 = findMaxOfArray(dataset,data2);
 
     const x = d3.scaleLinear()
         .domain([0, maxData1])
@@ -48,20 +63,89 @@ function makeScatterPlot(data1 ,data2, dataset){
 
         svg.append('g')
         .selectAll("dot")
-        .data(data)
+        .data(dataset)
         .join("circle")
-        .attr("cx", function (d) { return x((d.data1)); })
-        .attr("cy", function (d) { return y(d.data2); })
-        .attr("r", 4)
-        .style("fill", "red")
+        .attr("cx", function (d) { return x((d[data1])); })
+        .attr("cy", function (d) { return y(d[data2]); })
+        .attr("r", 3)
+        .style("fill", color)
         .style("stroke", "black");
 
     
 
 }
 
-function findMaxOfArray(data){
-    return Math.max(...data)
+//Read the data
+let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv";
+let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
+let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
+
+d3.csv(url3).then(function (data) {
+
+    makeScatterPlot("x", "y", data, "#my_dataviz", "red",1);
+})
+
+function zoomIn() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.scaleBy, 2);
 }
 
+function zoomOut() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.scaleBy, 0.5);
+}
 
+function resetZoom() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.scaleTo, 1);
+}
+
+function center() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.translateTo, 0.5 * width, 0.5 * height);
+}
+
+function panLeft() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.translateBy, -50, 0);
+}
+
+function panRight() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.translateBy, 50, 0);
+}
+
+function panUp() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.translateBy, 0, 50);
+}
+
+function panDown() {
+	d3.select('svg')
+		.transition()
+		.call(zoom.translateBy, 0, -50);
+}
+
+function handleZoom(e) {
+	d3.select('svg g')
+		.attr('transform', e.transform);
+}
+
+function findMaxOfArray(data, datapoint){
+    var max = data[0][datapoint];
+    for(var i=1; i<data.length; i++)
+    {
+     if(data[i][datapoint] > max){
+        max = data[i][datapoint];
+     } 
+    }
+    //console.log(max);
+    return max;
+}

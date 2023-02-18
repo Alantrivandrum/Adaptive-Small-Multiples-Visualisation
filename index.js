@@ -42,25 +42,28 @@ function findMax(data){
 
 }
 // set the dimensions and margins of the graph
-const margin = { top: 10, right: 30, bottom: 30, left: 60 },
+const margin = { top: 10, right: 30, bottom: 50, left: 60 },
     width = 350 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
     
 //Read the data
-d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv").then(function (data) {
-    findMax(data);
+let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv";
+let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
+let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
+
+d3.csv(url1).then(function (data) {
         let arrayOfDataPoints = getDatapoints(data);
         createButtons(arrayOfDataPoints);
-    	makeScatterPlot("x", "y", data, "#my_dataviz", "red",1);
-        makeScatterPlot("x", "z", data, "#my_dataviz2", "green",2);
-        makeScatterPlot("x", "carat", data, "#my_dataviz3", "blue",3);
-        makeScatterPlot("depth", "y", data, "#my_dataviz4", "red",4);
-        makeScatterPlot("depth", "z", data, "#my_dataviz5", "green",5);
-        makeScatterPlot("depth", "carat", data, "#my_dataviz6", "blue",6);
-        makeScatterPlot("table", "y", data, "#my_dataviz7", "red",7);
-        makeScatterPlot("table", "z", data, "#my_dataviz8", "green",8);
-        makeScatterPlot("table", "carat", data, "#my_dataviz9", "blue",9);
+    	makeScatterPlot("x", "y", data, "#main", "red",1);
+        makeScatterPlot("x", "z", data, "#main", "green",2);
+        makeScatterPlot("x", "carat", data, "#main", "blue",3);
+        makeScatterPlot("depth", "y", data, "#main", "red",4);
+        makeScatterPlot("depth", "z", data, "#main", "green",5);
+        makeScatterPlot("depth", "carat", data, "#main", "blue",6);
+        makeScatterPlot("table", "y", data, "#main", "red",7);
+        makeScatterPlot("table", "z", data, "#main", "green",8);
+        makeScatterPlot("table", "carat", data, "#main", "blue",9);
 
 })
 
@@ -86,8 +89,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
     .attr("height", height + margin.top + margin.bottom)
     .attr("id", ""+id)
     .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`)
-    .call(zoom);
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     svg.append("text")
     .attr("class", "x label")
@@ -104,6 +106,8 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
     .text(data2);
+
+    svg.call(zoom);
     
     maxData1 = findMaxOfArray(dataset,data1);
     maxData2 = findMaxOfArray(dataset,data2);
@@ -128,7 +132,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
         .join("circle")
         .attr("cx", function (d) { return x((d[data1])); })
         .attr("cy", function (d) { return y(d[data2]); })
-        .attr("r", 4)
+        .attr("r", 2)
         .style("fill", color)
         .style("stroke", "black");
 
@@ -166,14 +170,14 @@ function getDatapoints(data){
 
 function buttonFunction1(){
     document.getElementById("my_dataviz").innerHTML = "";
-    d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv").then(function (data) {
+    d3.csv(url3).then(function (data) {
     makeScatterPlot("z", "y", data, "#my_dataviz", "green");
     })
 }
 
 function buttonFunction2(){
     document.getElementById("my_dataviz").innerHTML = "";
-    d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv").then(function (data) {
+    d3.csv(url3).then(function (data) {
     makeScatterPlot("x", "y", data, "#my_dataviz", "red");
     })
 }
@@ -235,7 +239,7 @@ function createButtons(array){
 // }
 
 function handleZoom(e) {
-	d3.select('svg#svg9')
+	d3.select('svg g')
 		.attr('transform', e.transform);
 }
 
