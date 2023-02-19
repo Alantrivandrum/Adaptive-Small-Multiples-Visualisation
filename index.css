@@ -1,11 +1,23 @@
-/* body{
+body{
     overflow-y: hidden;
-} */
+}
 
 #main{
-    height:1000;
-    width: 3000;
-    display:table;
+    height:60vh;
+    width: 60vh;
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}
+
+#svg1{
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#svg2{
+    grid-column: 2;
+    grid-row: 1;
 }
 
 

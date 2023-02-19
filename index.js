@@ -52,18 +52,18 @@ let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/ma
 let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
 let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
 
-d3.csv(url1).then(function (data) {
+d3.csv(url3).then(function (data) {
         let arrayOfDataPoints = getDatapoints(data);
-        createButtons(arrayOfDataPoints);
-    	makeScatterPlot("x", "y", data, "#main", "red",1);
-        makeScatterPlot("x", "z", data, "#main", "green",2);
-        makeScatterPlot("x", "carat", data, "#main", "blue",3);
-        makeScatterPlot("depth", "y", data, "#main", "red",4);
-        makeScatterPlot("depth", "z", data, "#main", "green",5);
-        makeScatterPlot("depth", "carat", data, "#main", "blue",6);
-        makeScatterPlot("table", "y", data, "#main", "red",7);
-        makeScatterPlot("table", "z", data, "#main", "green",8);
-        makeScatterPlot("table", "carat", data, "#main", "blue",9);
+    	makeScatterPlot("x", "y", data, "#main", "red","svg1");
+        makeScatterPlot("x", "z", data, "#main", "green","sv2");
+        makeScatterPlot("x", "carat", data, "#main", "blue","sv3");
+        makeScatterPlot("depth", "y", data, "#main", "red","svg4");
+        makeScatterPlot("depth", "z", data, "#main", "green","svg5");
+        makeScatterPlot("depth", "carat", data, "#main", "blue","svg6");
+        makeScatterPlot("table", "y", data, "#main", "red","svg7");
+        makeScatterPlot("table", "z", data, "#main", "green","svg8");
+        makeScatterPlot("table", "carat", data, "#main", "blue","svg9");
+        //createButtons(arrayOfDataPoints);
 
 })
 
@@ -239,7 +239,7 @@ function createButtons(array){
 // }
 
 function handleZoom(e) {
-	d3.select('svg g')
+	d3.select('svg   g')
 		.attr('transform', e.transform);
 }
 
