@@ -3,9 +3,7 @@ const margin = { top: 10, right: 30, bottom: 30, left: 60 },
     height = 300 - margin.top - margin.bottom;
 
 
-    let zoom = d3.zoom()
-	.scaleExtent([0.25, 10])
-	.on('zoom', handleZoom);
+   
 
 //this function takes in two strings that determine the x and y axes based on attributes within dataset
 // x=data1, y = data2 
@@ -18,6 +16,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
 // }
 
 
+
     const svg = d3.select(cssId)
     .append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -25,6 +24,10 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
     .attr("id", ""+id)
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    let zoom = d3.zoom()
+.scaleExtent([0.25, 10])
+.on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg)});
 
     svg.append("text")
     .attr("class", "x label")
@@ -51,6 +54,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
         .domain([0, maxData1])
         .range([0, width]);
     svg.append("g")
+        .classed('x-axis', true)
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(x));
 
@@ -58,7 +62,12 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
     const y = d3.scaleLinear()
         .domain([0, maxData2])
         .range([height, 0]);
+
+    const initialXDomain = x.domain();
+    const initialYDomain = y.domain();
+    
     svg.append("g")
+        .classed('y-axis', true) 
         .call(d3.axisLeft(y));
 
         svg.append('g')
@@ -82,7 +91,7 @@ let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/ma
 
 d3.csv(url3).then(function (data) {
 
-    makeScatterPlot("x", "y", data, "#my_dataviz", "red",1);
+    makeScatterPlot("x", "y", data, "#my_dataviz", "red","1");
 })
 
 function zoomIn() {
@@ -133,9 +142,18 @@ function panDown() {
 		.call(zoom.translateBy, 0, -50);
 }
 
-function handleZoom(e) {
-	d3.select('svg g')
-		.attr('transform', e.transform);
+function handleZoom(e, x, y, data1, data2, svg) {
+    const newXScale = e.transform.rescaleX(x);
+    const newYScale = e.transform.rescaleY(y);
+
+    svg.select(".x.axis")
+        .call(d3.axisBottom(newXScale));
+    svg.select(".y.axis")
+        .call(d3.axisLeft(newYScale));
+
+    svg.selectAll("circle")
+        .attr("cx", function(d) { return newXScale(d[data1]); })
+        .attr("cy", function(d) { return newYScale(d[data2]); });
 }
 
 function findMaxOfArray(data, datapoint){

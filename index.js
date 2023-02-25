@@ -52,17 +52,17 @@ let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/ma
 let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
 let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
 
-d3.csv(url2).then(function (data) {
+d3.csv(url3).then(function (data) {
         let arrayOfDataPoints = getDatapoints(data);
     	makeScatterPlot("x", "y", data, "#main", "red","svg1");
-        makeScatterPlot("x", "z", data, "#main", "green","svg2");
-        makeScatterPlot("x", "carat", data, "#main", "blue","svg3");
-        makeScatterPlot("depth", "y", data, "#main", "red","svg4");
-        makeScatterPlot("depth", "z", data, "#main", "green","svg5");
-        makeScatterPlot("depth", "carat", data, "#main", "blue","svg6");
-        makeScatterPlot("table", "y", data, "#main", "red","svg7");
-        makeScatterPlot("table", "z", data, "#main", "green","svg8");
-        makeScatterPlot("table", "carat", data, "#main", "blue","svg9");
+        // makeScatterPlot("x", "z", data, "#main", "green","svg2");
+        // makeScatterPlot("x", "carat", data, "#main", "blue","svg3");
+        // makeScatterPlot("depth", "y", data, "#main", "red","svg4");
+        // makeScatterPlot("depth", "z", data, "#main", "green","svg5");
+        // makeScatterPlot("depth", "carat", data, "#main", "blue","svg6");
+        // makeScatterPlot("table", "y", data, "#main", "red","svg7");
+        // makeScatterPlot("table", "z", data, "#main", "green","svg8");
+        // makeScatterPlot("table", "carat", data, "#main", "blue","svg9");
         //createButtons(arrayOfDataPoints);
 
 })
@@ -239,7 +239,7 @@ function createButtons(array){
 // }
 
 function handleZoom(e) {
-	d3.select('svg#svg7   g')
+	d3.select('svg#svg1   g')
 		.attr('transform', e.transform);
 }
 
