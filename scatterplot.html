@@ -1,14 +1,27 @@
+
+<html>
+<head>
+
+</head>
+<body>
 <div id="my_dataviz">
-    
+  <form>
+		<label for="textbox1">Height:</label>
+		<input type="text" id="textbox1" name="textbox1"><br><br>
+		<label for="textbox2">Width:</label>
+		<input type="text" id="textbox2" name="textbox2"><br><br>
+		<button type="button" onclick="submitForm()">Submit</button>
+	</form>
+
 </div>
-  <button onclick="zoomIn()">Zoom in</button>
+  <!-- <button onclick="zoomIn()">Zoom in</button>
   <button onclick="zoomOut()">Zoom out</button>
   <button onclick="resetZoom()">Reset zoom</button>
   <button onclick="panLeft()">Pan left</button>
   <button onclick="panRight()">Pan right</button>
   <button onclick="panUp()">Pan up</button>
   <button onclick="panDown()">Pan down</button>
-  <button onclick="center()">Center</button>
+  <button onclick="center()">Center</button> -->
   
 
   <!-- Load d3.js -->
@@ -17,3 +30,4 @@
 <script src="graph.js" ></script>
 </body>
 
+</html>

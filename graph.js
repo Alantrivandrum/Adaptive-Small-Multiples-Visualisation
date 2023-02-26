@@ -1,13 +1,13 @@
-const margin = { top: 10, right: 30, bottom: 30, left: 60 },
-    width = 350 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+const margin = { top: 10, right: 30, bottom: 30, left: 60 }
+    //width = 350 - margin.left - margin.right,
+    //height = 300 - margin.top - margin.bottom;
 
 
    
 
 //this function takes in two strings that determine the x and y axes based on attributes within dataset
 // x=data1, y = data2 
-function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
+function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width){
 
 
 // function initZoom() {
@@ -20,7 +20,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
     const svg = d3.select(cssId)
     .append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("height", height + margin.top + margin.bottom)    
     .attr("id", ""+id)
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -84,15 +84,6 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
 
 }
 
-//Read the data
-let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv";
-let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
-let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
-
-d3.csv(url3).then(function (data) {
-
-    makeScatterPlot("x", "y", data, "#my_dataviz", "red","1");
-})
 
 function zoomIn() {
 	d3.select('svg')
@@ -146,10 +137,11 @@ function handleZoom(e, x, y, data1, data2, svg) {
     const newXScale = e.transform.rescaleX(x);
     const newYScale = e.transform.rescaleY(y);
 
+
     svg.select(".x.axis")
-        .call(d3.axisBottom(newXScale));
+        .call(d3.axisBottom(newXScale).ticks(5));
     svg.select(".y.axis")
-        .call(d3.axisLeft(newYScale));
+        .call(d3.axisLeft(newYScale).ticks(5));
 
     svg.selectAll("circle")
         .attr("cx", function(d) { return newXScale(d[data1]); })
@@ -166,4 +158,26 @@ function findMaxOfArray(data, datapoint){
     }
     //console.log(max);
     return max;
+}
+
+
+
+function submitForm() {
+    // Get the values of the two text boxes
+    var height = document.getElementById("textbox1").value;
+    var width = document.getElementById("textbox2").value;
+    height = height - margin.top - margin.bottom;
+    width  = width - margin.left - margin.right;
+
+    // Do something with the values, such as displaying them in an alert box
+    alert("Size of screen is: " + height + " x " + width);
+    //Read the data
+    let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv";
+    let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
+    let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
+
+    d3.csv(url3).then(function (data) {
+
+        makeScatterPlot("x", "y", data, "#my_dataviz", "red","1",height, width);
+    })
 }
