@@ -25,6 +25,16 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+
+    // svg.append("g")
+    //     .attr("class", "hidden rectangle")
+    // .append("rect")
+    //     .attr("class", "background")
+    //     .attr("x",0)
+    //     .attr("y",height)
+    //     .attr("width", width)
+    //     .attr("height", 0);
+
     svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
@@ -78,7 +88,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
     
     let zoom = d3.zoom()
     .scaleExtent([0.25, 10])
-    .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg,gX,gY)});
+    .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg)});
 
     svg.call(zoom);
     
@@ -133,7 +143,7 @@ function panDown() {
 		.call(zoom.translateBy, 0, -50);
 }
 
-function handleZoom(e, x, y, data1, data2, svg, gX, gY) {
+function handleZoom(e, x, y, data1, data2, svg) {
     const newXScale = e.transform.rescaleX(x);
     const newYScale = e.transform.rescaleY(y);
 
@@ -141,15 +151,12 @@ function handleZoom(e, x, y, data1, data2, svg, gX, gY) {
     newXScale.domain(e.transform.rescaleX(x).domain());
     newYScale.domain(e.transform.rescaleY(y).domain());
    
+    xAxis = svg.select("g.x-axis");
+    yAxis = svg.select("g.y-axis");
 
-    // svg.select(".x.axis")
-    //     .call(d3.axisBottom(newXScale));
 
-    // svg.select(".y.axis")
-    //     .call(d3.axisLeft(newYScale));
-
-    gX.call(d3.axisBottom(newXScale));
-    gY.call(d3.axisLeft(newYScale));
+    xAxis.call(d3.axisBottom(newXScale));
+    yAxis.call(d3.axisLeft(newYScale));
 
     svg.selectAll("circle")
         .attr("cx", function(d) { return newXScale(d[data1]); })
