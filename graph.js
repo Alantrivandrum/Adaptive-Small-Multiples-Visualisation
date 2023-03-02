@@ -195,7 +195,7 @@ function submitForm() {
     let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
     let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
 
-    d3.csv(url3).then(function (data) {
+    d3.csv(url1).then(function (data) {
 
         makeScatterPlot("x", "y", data, "#my_dataviz", "red","1",height, width);
     })
