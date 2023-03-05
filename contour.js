@@ -13,7 +13,7 @@ var svg = d3.select("#my_dataviz")
           "translate(" + margin.left + "," + margin.top + ")");
 
 // read data
-d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv  ", function(data) {
+d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv ", function(data) {
 
   // Add X axis
   var x = d3.scaleLinear()
@@ -25,7 +25,7 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
 
   // Add Y axis
   var y = d3.scaleLinear()
-    .domain([0, 8])
+    .domain([0, 10])
     .range([ height, 0 ]);
   svg.append("g")
     .call(d3.axisLeft(y));
@@ -35,7 +35,7 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
     .x(function(d) { return x(d.x); })   // x and y = column name in .csv input data
     .y(function(d) { return y(d.y); })
     .size([width, height])
-    .bandwidth(20)    // smaller = more precision in lines = more lines
+    .bandwidth(15)    // smaller = more precision in lines = more lines
     (data)
 
   // Add the contour: several "path"

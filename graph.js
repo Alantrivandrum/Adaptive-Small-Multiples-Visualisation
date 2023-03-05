@@ -88,7 +88,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
     
     let zoom = d3.zoom()
     .scaleExtent([0.25, 10])
-    .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg)});
+    .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg, height, width)});
 
     svg.call(zoom);
     
@@ -143,7 +143,7 @@ function panDown() {
 		.call(zoom.translateBy, 0, -50);
 }
 
-function handleZoom(e, x, y, data1, data2, svg) {
+function handleZoom(e, x, y, data1, data2, svg, height, width) {
     const newXScale = e.transform.rescaleX(x);
     const newYScale = e.transform.rescaleY(y);
 
@@ -161,6 +161,8 @@ function handleZoom(e, x, y, data1, data2, svg) {
     svg.selectAll("circle")
         .attr("cx", function(d) { return newXScale(d[data1]); })
         .attr("cy", function(d) { return newYScale(d[data2]); });
+
+    filterPoints(height, width);
 
 }
 
@@ -195,10 +197,25 @@ function submitForm() {
     let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
     let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
 
-    d3.csv(url1).then(function (data) {
+    d3.csv(url3).then(function (data) {
 
         makeScatterPlot("x", "y", data, "#my_dataviz", "red","1",height, width);
     })
 }
 
+
+function filterPoints(height, width) {
+
+// select all circles
+d3.selectAll("circle")
+  .each(function() {
+    if(this.getAttribute("cx") < 0 || this.getAttribute("cy") > height){
+        d3.select(this).attr("class", "invisible");
+    }
+    else{
+        d3.select(this).attr("class", "visible");
+    }
+  });
+
+}
 
