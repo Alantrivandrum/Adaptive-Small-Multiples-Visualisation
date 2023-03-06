@@ -43,8 +43,10 @@ function findMax(data){
 }
 // set the dimensions and margins of the graph
 const margin = { top: 10, right: 30, bottom: 50, left: 60 },
-    width = 350 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    //width = 350 - margin.left - margin.right,
+    //height = 300 - margin.top - margin.bottom;
+    width = document.getElementById("main").offsetWidth/4.5;
+    height = document.getElementById("main").offsetHeight/4.5;
 
     
 //Read the data
@@ -54,91 +56,108 @@ let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/ma
 
 d3.csv(url3).then(function (data) {
         let arrayOfDataPoints = getDatapoints(data);
-    	makeScatterPlot("x", "y", data, "#main", "red","svg1");
-        makeScatterPlot("x", "z", data, "#main", "green","svg2");
-        makeScatterPlot("x", "carat", data, "#main", "blue","svg3");
-        makeScatterPlot("depth", "y", data, "#main", "red","svg4");
-        makeScatterPlot("depth", "z", data, "#main", "green","svg5");
-        makeScatterPlot("depth", "carat", data, "#main", "blue","svg6");
-        makeScatterPlot("table", "y", data, "#main", "red","svg7");
-        makeScatterPlot("table", "z", data, "#main", "green","svg8");
-        makeScatterPlot("table", "carat", data, "#main", "blue","svg9");
-        createButtons(arrayOfDataPoints);
+    	makeScatterPlot("x", "y", data, "#main", "red","svg1", height,width);
+        makeScatterPlot("x", "z", data, "#main", "green","svg2",height, width);
+        makeScatterPlot("x", "carat", data, "#main", "blue","svg3",height, width);
+        makeScatterPlot("depth", "y", data, "#main", "red","svg4", height, width);
+        makeScatterPlot("depth", "z", data, "#main", "green","svg5", height, width);
+        makeScatterPlot("depth", "carat", data, "#main", "blue","svg6", height, width);
+        makeScatterPlot("table", "y", data, "#main", "red","svg7", height, width);
+        makeScatterPlot("table", "z", data, "#main", "green","svg8", height, width);
+        makeScatterPlot("table", "carat", data, "#main", "blue","svg9", height, width);
+        //createButtons(arrayOfDataPoints);
 
 })
 
 
 //this function takes in two strings that determine the x and y axes based on attributes within dataset
 // x=data1, y = data2 
-function makeScatterPlot(data1 ,data2, dataset, cssId, color, id ){
-
-    let zoom = d3.zoom()
-	.scaleExtent([0.25, 10])
-	.on('zoom', handleZoom);
+function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width){
 
 
-// function initZoom() {
-// 	d3.select('svg#svg9')
-// 		.call(zoom);
-// }
-
-
-    const svg = d3.select(cssId)
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .attr("id", ""+id)
-    .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-    svg.append("text")
-    .attr("class", "x label")
-    .attr("text-anchor", "end")
-    .attr("x", width/2)
-    .attr("y", height+30)
-    .text(data1);
-
-    svg.append("text")
-    .attr("class", "y label")
-    .attr("text-anchor", "end")
-    .attr("y", -margin.left+20 )
-    .attr("x", -height/2)
-    .attr("dy", ".75em")
-    .attr("transform", "rotate(-90)")
-    .text(data2);
-
-    svg.call(zoom);
+    // function initZoom() {
+    // 	d3.select('svg#svg9')
+    // 		.call(zoom);
+    // }
     
-    maxData1 = findMaxOfArray(dataset,data1);
-    maxData2 = findMaxOfArray(dataset,data2);
-
-    const x = d3.scaleLinear()
-        .domain([0, maxData1])
-        .range([0, width]);
-    svg.append("g")
-        .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(x));
-
-    // Add Y axis
-    const y = d3.scaleLinear()
-        .domain([0, maxData2])
-        .range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y));
-
-        svg.append('g')
-        .selectAll("dot")
-        .data(dataset)
-        .join("circle")
-        .attr("cx", function (d) { return x((d[data1])); })
-        .attr("cy", function (d) { return y(d[data2]); })
-        .attr("r", 2)
-        .style("fill", color)
-        .style("stroke", "black");
-
     
-
-}
+    
+        const svg = d3.select(cssId)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)    
+        .attr("id", ""+id)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    
+    
+        // svg.append("g")
+        //     .attr("class", "hidden rectangle")
+        // .append("rect")
+        //     .attr("class", "background")
+        //     .attr("x",0)
+        //     .attr("y",height)
+        //     .attr("width", width)
+        //     .attr("height", 0);
+    
+        svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width/2)
+        .attr("y", height+30)
+        .text(data1);
+    
+        svg.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", -margin.left+20 )
+        .attr("x", -height/2)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text(data2);
+    
+        
+        
+        maxData1 = findMaxOfArray(dataset,data1);
+        maxData2 = findMaxOfArray(dataset,data2);
+    
+        const x = d3.scaleLinear()
+            .domain([0, maxData1])
+            .range([0, width]);
+    
+        gX = svg.append("g")
+            .classed('x-axis', true)
+            .attr("transform", `translate(0, ${height})`)
+            .call(d3.axisBottom(x));
+    
+        // Add Y axis
+        const y = d3.scaleLinear()
+            .domain([0, maxData2])
+            .range([height, 0]);
+    
+        
+        gY = svg.append("g")
+            .classed('y-axis', true) 
+            .call(d3.axisLeft(y));
+    
+            svg.append('g')
+            .selectAll("dot")
+            .data(dataset)
+            .join("circle")
+            .attr("cx", function (d) { return x((d[data1])); })
+            .attr("cy", function (d) { return y(d[data2]); })
+            .attr("r", 3)
+            .style("fill", color)
+            .style("stroke", "black");
+    
+        
+        let zoom = d3.zoom()
+        .scaleExtent([0.25, 10])
+        .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg, height, width)});
+    
+        svg.call(zoom);
+        
+    }
 function findMaxOfArray(data, datapoint){
     var max = data[0][datapoint];
     for(var i=1; i<data.length; i++)
@@ -238,8 +257,93 @@ function buttonFunction2(){
 // 		.call(zoom.translateBy, 50, 0);
 // }
 
-function handleZoom(e) {
-	d3.select('svg#svg1   g')
-		.attr('transform', e.transform);
+function handleZoom(e, x, y, data1, data2, svg, height, width) {
+    const newXScale = e.transform.rescaleX(x);
+    const newYScale = e.transform.rescaleY(y);
+
+    // Update the x and y scales based on the rescaled domain of the zoom event
+    newXScale.domain(e.transform.rescaleX(x).domain());
+    newYScale.domain(e.transform.rescaleY(y).domain());
+   
+    xAxis = svg.select("g.x-axis");
+    yAxis = svg.select("g.y-axis");
+
+
+    xAxis.call(d3.axisBottom(newXScale));
+    yAxis.call(d3.axisLeft(newYScale));
+
+    svg.selectAll("circle")
+        .attr("cx", function(d) { return newXScale(d[data1]); })
+        .attr("cy", function(d) { return newYScale(d[data2]); });
+
+    filterPoints(height, width);
+
+}
+function filterPoints(height, width) {
+
+    // select all circles
+    d3.selectAll("circle")
+      .each(function() {
+        if(this.getAttribute("cx") < 0 || this.getAttribute("cy") > height){
+            d3.select(this).attr("class", "invisible");
+        }
+        else{
+            d3.select(this).attr("class", "visible");
+        }
+      });
+    
+    }
+    
+
+
+// Get the main div element
+var mainDiv = document.getElementById("main");
+
+// Define the variables for resizing
+var startX, startY, startWidth, startHeight;
+
+// Add event listeners for the mousedown and touchstart events
+mainDiv.addEventListener("mousedown", startResize);
+mainDiv.addEventListener("touchstart", startResize);
+
+// Define the startResize function
+function startResize(e) {
+  // Prevent default behavior for the mousedown or touchstart event
+  e.preventDefault();
+  
+  // Get the initial mouse or touch position and dimensions of the main div
+  startX = e.clientX || e.touches[0].clientX;
+  startY = e.clientY || e.touches[0].clientY;
+  startWidth = mainDiv.offsetWidth;
+  startHeight = mainDiv.offsetHeight;
+  
+  // Add event listeners for the mousemove and touchmove events
+  document.addEventListener("mousemove", resize);
+  document.addEventListener("touchmove", resize);
+  
+  // Add event listeners for the mouseup and touchend events
+  document.addEventListener("mouseup", stopResize);
+  document.addEventListener("touchend", stopResize);
 }
 
+// Define the resize function
+function resize(e) {
+  // Calculate the distance the mouse or touch has moved
+  var deltaX = (e.clientX || e.touches[0].clientX) - startX;
+  var deltaY = (e.clientY || e.touches[0].clientY) - startY;
+  
+  // Set the new width and height of the main div
+  mainDiv.style.width = (startWidth + deltaX) + "px";
+  mainDiv.style.height = (startHeight + deltaY) + "px";
+}
+
+// Define the stopResize function
+function stopResize() {
+  // Remove the event listeners for the mousemove and touchmove events
+  document.removeEventListener("mousemove", resize);
+  document.removeEventListener("touchmove", resize);
+  
+  // Remove the event listeners for the mouseup and touchend events
+  document.removeEventListener("mouseup", stopResize);
+  document.removeEventListener("touchend", stopResize);
+}
