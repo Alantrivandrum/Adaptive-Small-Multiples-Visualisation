@@ -12,8 +12,15 @@ const svg = d3.select("#my_dataviz")
     .attr("transform",
           `translate(${margin.left},${margin.top})`);
 
+   
+let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv";
+let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
+let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
 // get the data
-d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv").then( function(data) {
+d3.csv(url1).then( function(data) {
+
+    maxData1 = findMaxOfArray(data,"x");
+    maxData2 = findMaxOfArray(data,"y");
 
   // X axis: scale and draw:
   const x = d3.scaleLinear()
@@ -50,3 +57,16 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
         .style("fill", "#69b3a2")
 
 });
+
+
+function findMaxOfArray(data, datapoint){
+    var max = data[0][datapoint];
+    for(var i=1; i<data.length; i++)
+    {
+     if(data[i][datapoint] > max){
+        max = data[i][datapoint];
+     } 
+    }
+    //console.log(max);
+    return max;
+}

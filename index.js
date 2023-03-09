@@ -1,52 +1,10 @@
 
-var maxX;
-var maxY;
-var maxTable;
-var maxDepth;
-var maxZ;
-var maxCarat;
-function findMax(data){
-    xArray = [];
-    yArray = [];
-    tableArray = [];
-    depthArray = [];
-    zArray = [];
-    caratArray = [];
-
-    for(var datapoint in data){
-        if(!isNaN(data[datapoint].x)){
-        xArray.push(Number(data[datapoint].x));
-        }
-        if(!isNaN(data[datapoint].y)){
-            yArray.push(Number(data[datapoint].y));
-        }
-        if(!isNaN(data[datapoint].table)){
-            tableArray.push(Number(data[datapoint].table));
-        }
-        if(!isNaN(data[datapoint].depth)){
-            depthArray.push(Number(data[datapoint].depth));
-        }
-        if(!isNaN(data[datapoint].z)){
-            zArray.push(Number(data[datapoint].z));
-        }
-        if(!isNaN(data[datapoint].carat)){
-            caratArray.push(Number(data[datapoint].carat));
-        }
-    }
-    maxX = Math.max(...xArray);
-    maxY = Math.max(...yArray);
-    maxDepth = Math.max(...depthArray);
-    maxTable = Math.max(...tableArray);
-    maxZ = Math.max(...zArray);
-    maxCarat = Math.max(...caratArray);
-
-}
 // set the dimensions and margins of the graph
-const margin = { top: 10, right: 30, bottom: 50, left: 60 },
+const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     //width = 350 - margin.left - margin.right,
     //height = 300 - margin.top - margin.bottom;
-    width = document.getElementById("main").offsetWidth/4.5;
-    height = document.getElementById("main").offsetHeight/4.5;
+    let width = document.getElementById("main").offsetWidth/4.5;
+    let height = document.getElementById("main").offsetHeight/4.5;
 
     
 //Read the data
@@ -54,7 +12,12 @@ let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/ma
 let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
 let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
 
-d3.csv(url3).then(function (data) {
+
+
+
+function makeMatrix(height,width, url){
+d3.csv(url).then(function (data) {
+        clearDiv();
         let arrayOfDataPoints = getDatapoints(data);
     	makeScatterPlot("x", "y", data, "#main", "red","svg1", height,width);
         makeScatterPlot("x", "z", data, "#main", "green","svg2",height, width);
@@ -68,6 +31,7 @@ d3.csv(url3).then(function (data) {
         //createButtons(arrayOfDataPoints);
 
 })
+}
 
 
 //this function takes in two strings that determine the x and y axes based on attributes within dataset
@@ -335,6 +299,9 @@ function resize(e) {
   // Set the new width and height of the main div
   mainDiv.style.width = (startWidth + deltaX) + "px";
   mainDiv.style.height = (startHeight + deltaY) + "px";
+  width = (startWidth + deltaX - margin.left - margin.right)/4.5
+  height = (startHeight+deltaY - margin.top - margin.bottom)/4.5
+  makeMatrix(height,width,url3);
 }
 
 // Define the stopResize function
@@ -346,4 +313,14 @@ function stopResize() {
   // Remove the event listeners for the mouseup and touchend events
   document.removeEventListener("mouseup", stopResize);
   document.removeEventListener("touchend", stopResize);
+
 }
+
+
+
+function clearDiv()
+{
+    document.getElementById("main").innerHTML = "";
+}
+
+makeMatrix(height, width, url3);

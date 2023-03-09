@@ -35,7 +35,7 @@ d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/d
     .x(function(d) { return x(d.x); })   // x and y = column name in .csv input data
     .y(function(d) { return y(d.y); })
     .size([width, height])
-    .bandwidth(15)    // smaller = more precision in lines = more lines
+    .bandwidth(30)    // smaller = more precision in lines = more lines
     (data)
 
   // Add the contour: several "path"

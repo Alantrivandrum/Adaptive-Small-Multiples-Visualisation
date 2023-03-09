@@ -450,3 +450,49 @@
     //     .attr("r", 4)
     //     .style("fill", "blue")
     //     .style("stroke", "black");
+
+
+
+    
+// var maxX;
+// var maxY;
+// var maxTable;
+// var maxDepth;
+// var maxZ;
+// var maxCarat;
+// function findMax(data){
+//     xArray = [];
+//     yArray = [];
+//     tableArray = [];
+//     depthArray = [];
+//     zArray = [];
+//     caratArray = [];
+
+//     for(var datapoint in data){
+//         if(!isNaN(data[datapoint].x)){
+//         xArray.push(Number(data[datapoint].x));
+//         }
+//         if(!isNaN(data[datapoint].y)){
+//             yArray.push(Number(data[datapoint].y));
+//         }
+//         if(!isNaN(data[datapoint].table)){
+//             tableArray.push(Number(data[datapoint].table));
+//         }
+//         if(!isNaN(data[datapoint].depth)){
+//             depthArray.push(Number(data[datapoint].depth));
+//         }
+//         if(!isNaN(data[datapoint].z)){
+//             zArray.push(Number(data[datapoint].z));
+//         }
+//         if(!isNaN(data[datapoint].carat)){
+//             caratArray.push(Number(data[datapoint].carat));
+//         }
+//     }
+//     maxX = Math.max(...xArray);
+//     maxY = Math.max(...yArray);
+//     maxDepth = Math.max(...depthArray);
+//     maxTable = Math.max(...tableArray);
+//     maxZ = Math.max(...zArray);
+//     maxCarat = Math.max(...caratArray);
+
+// }
