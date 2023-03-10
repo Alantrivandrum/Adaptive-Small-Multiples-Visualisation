@@ -1,51 +1,70 @@
-// set the dimensions and margins of the graph
-var margin = {top: 20, right: 30, bottom: 30, left: 40},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+  // Set up the data
+  d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv").then((data) => {
+      
+      makeContourPlot(data);
+});
 
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
+function makeContourPlot(data){
+  
+  // Set up the scales
+  const xScale = d3.scaleLinear().domain([0,10 /*d3.max(data, (d) => d.x)*/]).range([50, 550]);
+  const yScale = d3.scaleLinear().domain([0,10 /*d3.max(data, (d) => d.y)]*/]).range([350, 50]);
+  const zScale = d3.scaleLinear().domain([0, 100]).range([0, 255]);
 
-// read data
-d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv ", function(data) {
+  // Set up the color scale
+  const colorScale = d3.scaleSequential(zScale).interpolator(d3.interpolateViridis);
 
-  // Add X axis
-  var x = d3.scaleLinear()
-    .domain([0, 10])
-    .range([ 0, width ]);
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+  // Set up the contour generator
+  const contourGenerator = d3
+    .contourDensity()
+    .x((d) => xScale(d.x))
+    .y((d) => yScale(d.y))
+    .size([500, 300])
+    .bandwidth(25);
 
-  // Add Y axis
-  var y = d3.scaleLinear()
-    .domain([0, 10])
-    .range([ height, 0 ]);
-  svg.append("g")
-    .call(d3.axisLeft(y));
+  // Generate the contours
+  const contours = contourGenerator(data);
 
-  // compute the density data
-  var densityData = d3.contourDensity()
-    .x(function(d) { return x(d.x); })   // x and y = column name in .csv input data
-    .y(function(d) { return y(d.y); })
-    .size([width, height])
-    .bandwidth(30)    // smaller = more precision in lines = more lines
-    (data)
-
-  // Add the contour: several "path"
+  // Add the contours to the chart
+  const svg = d3.select("#my_dataviz").append("svg");
+  svg.attr("width", "600")
+  svg.attr("height", "400");
+  
   svg
     .selectAll("path")
-    .data(densityData)
+    .data(contours)
     .enter()
     .append("path")
-      .attr("d", d3.geoPath())
-      .attr("fill", "none")
-      .attr("stroke", "#69b3a2")
-      .attr("stroke-linejoin", "round")
-})
+    .attr("d", d3.geoPath())
+    .attr("fill", "none")
+    .attr("stroke", "green");
+
+  // Add x axis
+  const xAxis = d3.axisBottom(xScale);
+  svg
+    .append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0, 350)")
+    .call(xAxis)
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("x", 550)
+    .attr("y", -6)
+    .style("text-anchor", "end")
+    .text("x");
+
+  // Add y axis
+  const yAxis = d3.axisLeft(yScale);
+  svg
+    .append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(50, 0)")
+    .call(yAxis)
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("y");
+}
