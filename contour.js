@@ -1,14 +1,16 @@
   // Set up the data
   d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv").then((data) => {
       
-      makeContourPlot(data);
+      makeContourPlot(data, "x", "y");
 });
 
-function makeContourPlot(data){
+function makeContourPlot(data, data1, data2){
   
+  let maxData1 = findMaxOfArray(data,data1);
+  let maxData2 = findMaxOfArray(data,data2)
   // Set up the scales
-  const xScale = d3.scaleLinear().domain([0,10 /*d3.max(data, (d) => d.x)*/]).range([50, 550]);
-  const yScale = d3.scaleLinear().domain([0,10 /*d3.max(data, (d) => d.y)]*/]).range([350, 50]);
+  const xScale = d3.scaleLinear().domain([0,maxData1]).range([50, 550]);
+  const yScale = d3.scaleLinear().domain([0,maxData2]).range([350, 50]);
   const zScale = d3.scaleLinear().domain([0, 100]).range([0, 255]);
 
   // Set up the color scale
@@ -17,8 +19,8 @@ function makeContourPlot(data){
   // Set up the contour generator
   const contourGenerator = d3
     .contourDensity()
-    .x((d) => xScale(d.x))
-    .y((d) => yScale(d.y))
+    .x((d) => xScale(d[data1]))
+    .y((d) => yScale(d[data2]))
     .size([500, 300])
     .bandwidth(25);
 
@@ -67,4 +69,17 @@ function makeContourPlot(data){
     .attr("dy", ".71em")
     .style("text-anchor", "end")
     .text("y");
+}
+
+
+function findMaxOfArray(data, datapoint){
+  var max = data[0][datapoint];
+  for(var i=1; i<data.length; i++)
+  {
+   if(data[i][datapoint] > max){
+      max = data[i][datapoint];
+   } 
+  }
+  //console.log(max);
+  return max;
 }
