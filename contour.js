@@ -45,7 +45,7 @@ function makeContourPlot(data, data1, data2){
   const xAxis = d3.axisBottom(xScale);
   svg
     .append("g")
-    .attr("class", "axis")
+    .attr("class", "x-axis")
     .attr("transform", "translate(0, 350)")
     .call(xAxis)
     .append("text")
@@ -59,7 +59,7 @@ function makeContourPlot(data, data1, data2){
   const yAxis = d3.axisLeft(yScale);
   svg
     .append("g")
-    .attr("class", "axis")
+    .attr("class", "y-axis")
     .attr("transform", "translate(50, 0)")
     .call(yAxis)
     .append("text")
@@ -69,6 +69,13 @@ function makeContourPlot(data, data1, data2){
     .attr("dy", ".71em")
     .style("text-anchor", "end")
     .text("y");
+
+  let zoom = d3.zoom()
+  .scaleExtent([0.25, 10])
+  .on('zoom', function(e){handleZoomContour(e,xScale,yScale,data1,data2,svg)});
+
+    svg.call(zoom);
+    
 }
 
 
@@ -82,4 +89,25 @@ function findMaxOfArray(data, datapoint){
   }
   //console.log(max);
   return max;
+}
+
+
+
+function handleZoomContour(e, x, y, data1, data2, svg) {
+  const newXScale = e.transform.rescaleX(x);
+  const newYScale = e.transform.rescaleY(y);
+
+  // Update the x and y scales based on the rescaled domain of the zoom event
+  newXScale.domain(e.transform.rescaleX(x).domain());
+  newYScale.domain(e.transform.rescaleY(y).domain());
+ 
+  xAxis = svg.select("g.x-axis");
+  yAxis = svg.select("g.y-axis");
+
+
+  xAxis.call(d3.axisBottom(newXScale));
+  yAxis.call(d3.axisLeft(newYScale));
+
+
+
 }
