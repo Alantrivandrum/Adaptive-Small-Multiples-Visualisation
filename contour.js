@@ -72,7 +72,7 @@ function makeContourPlot(data, data1, data2){
 
   let zoom = d3.zoom()
   .scaleExtent([0.25, 10])
-  .on('zoom', function(e){handleZoomContour(e,xScale,yScale,data1,data2,svg)});
+  .on('zoom', function(e){handleZoomContour(e,xScale,yScale,data,data1,data2,svg, contourGenerator)});
 
     svg.call(zoom);
     
@@ -93,7 +93,7 @@ function findMaxOfArray(data, datapoint){
 
 
 
-function handleZoomContour(e, x, y, data1, data2, svg) {
+function handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator) {
   const newXScale = e.transform.rescaleX(x);
   const newYScale = e.transform.rescaleY(y);
 
@@ -104,10 +104,33 @@ function handleZoomContour(e, x, y, data1, data2, svg) {
   xAxis = svg.select("g.x-axis");
   yAxis = svg.select("g.y-axis");
 
+  // Update the x and y scales of the contour generator
+  contourGenerator.x((d) => newXScale(d[data1]));
+  contourGenerator.y((d) => newYScale(d[data2]));
 
+  // Generate the updated contours
+  const updatedContours = contourGenerator(data);
+
+  // Select all existing contour paths and bind the updated contours data
+  const contourPaths = svg.selectAll("path").data(updatedContours);
+
+  // Update existing paths with new data and scales
+  contourPaths
+    .attr("d", d3.geoPath())
+    .attr("fill", "none")
+    .attr("stroke", "green");
+
+  // Add new paths for any new data points that appear after zooming
+  contourPaths.enter()
+    .append("path")
+    .attr("d", d3.geoPath())
+    .attr("fill", "none")
+    .attr("stroke", "green");
+
+  // Remove any paths that are no longer needed after zooming
+  contourPaths.exit().remove();
+
+  // Update the x and y axes with the new scales
   xAxis.call(d3.axisBottom(newXScale));
   yAxis.call(d3.axisLeft(newYScale));
-
-
-
 }
