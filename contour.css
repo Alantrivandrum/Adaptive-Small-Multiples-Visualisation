@@ -1,0 +1,13 @@
+.x-axis, .y-axis {
+    position: relative;
+    z-index: 10;
+  }
+  
+  path {
+    position: relative;
+    z-index: 5;
+  }
+
+  .invisible{
+    display: none;
+  }

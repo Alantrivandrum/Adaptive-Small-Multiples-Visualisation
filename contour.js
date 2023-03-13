@@ -1,16 +1,20 @@
+const margin = { top: 10, right: 30, bottom: 30, left: 60 }
+let width = 600;
+let height = 400;
   // Set up the data
   d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv").then((data) => {
       
-      makeContourPlot(data, "x", "y");
+      makeContourPlot(data, "x", "y",width, height, margin);
 });
 
-function makeContourPlot(data, data1, data2){
-  
-  let maxData1 = findMaxOfArray(data,data1);
-  let maxData2 = findMaxOfArray(data,data2)
+
+function makeContourPlot(data, data1, data2, width, height, margin) {
+  const maxData1 = findMaxOfArray(data, data1);
+  const maxData2 = findMaxOfArray(data, data2);
+
   // Set up the scales
-  const xScale = d3.scaleLinear().domain([0,maxData1]).range([50, 550]);
-  const yScale = d3.scaleLinear().domain([0,maxData2]).range([350, 50]);
+  const xScale = d3.scaleLinear().domain([0, maxData1]).range([margin.left, width - margin.right]);
+  const yScale = d3.scaleLinear().domain([0, maxData2]).range([height - margin.bottom, margin.top]);
   const zScale = d3.scaleLinear().domain([0, 100]).range([0, 255]);
 
   // Set up the color scale
@@ -21,7 +25,7 @@ function makeContourPlot(data, data1, data2){
     .contourDensity()
     .x((d) => xScale(d[data1]))
     .y((d) => yScale(d[data2]))
-    .size([500, 300])
+    .size([width - margin.left - margin.right, height - margin.top - margin.bottom])
     .bandwidth(25);
 
   // Generate the contours
@@ -29,9 +33,8 @@ function makeContourPlot(data, data1, data2){
 
   // Add the contours to the chart
   const svg = d3.select("#my_dataviz").append("svg");
-  svg.attr("width", "600")
-  svg.attr("height", "400");
-  
+  svg.attr("width", width).attr("height", height);
+
   svg
     .selectAll("path")
     .data(contours)
@@ -39,18 +42,19 @@ function makeContourPlot(data, data1, data2){
     .append("path")
     .attr("d", d3.geoPath())
     .attr("fill", "none")
-    .attr("stroke", "green");
+    .attr("stroke", "green")
+    .attr("pointer-events", "none");
 
   // Add x axis
   const xAxis = d3.axisBottom(xScale);
   svg
     .append("g")
     .attr("class", "x-axis")
-    .attr("transform", "translate(0, 350)")
+    .attr("transform", `translate(0, ${height - margin.bottom})`)
     .call(xAxis)
     .append("text")
     .attr("class", "axis-label")
-    .attr("x", 550)
+    .attr("x", width - margin.right)
     .attr("y", -6)
     .style("text-anchor", "end")
     .text("x");
@@ -60,7 +64,7 @@ function makeContourPlot(data, data1, data2){
   svg
     .append("g")
     .attr("class", "y-axis")
-    .attr("transform", "translate(50, 0)")
+    .attr("transform", `translate(${margin.left}, 0)`)
     .call(yAxis)
     .append("text")
     .attr("class", "axis-label")
@@ -71,11 +75,12 @@ function makeContourPlot(data, data1, data2){
     .text("y");
 
   let zoom = d3.zoom()
-  .scaleExtent([0.25, 10])
-  .on('zoom', function(e){handleZoomContour(e,xScale,yScale,data,data1,data2,svg, contourGenerator)});
+    .scaleExtent([0.25, 10])
+    .on("zoom", function (e) {
+      handleZoomContour(e, xScale, yScale, data, data1, data2, svg, contourGenerator);
+    });
 
-    svg.call(zoom);
-    
+  svg.call(zoom);
 }
 
 
@@ -96,6 +101,7 @@ function findMaxOfArray(data, datapoint){
 function handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator) {
   const newXScale = e.transform.rescaleX(x);
   const newYScale = e.transform.rescaleY(y);
+  
 
   // Update the x and y scales based on the rescaled domain of the zoom event
   newXScale.domain(e.transform.rescaleX(x).domain());
@@ -133,4 +139,35 @@ function handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator) {
   // Update the x and y axes with the new scales
   xAxis.call(d3.axisBottom(newXScale));
   yAxis.call(d3.axisLeft(newYScale));
+
+ //filterContours(550)
+}
+
+function filterContours(height) {
+
+  d3.selectAll("path")
+    .each(function() {
+      // get the bounding box of the current contour path
+      const bbox = this.getBBox();
+      // check if the path is outside of the visible area
+      if(bbox.x+bbox.width < 0 || bbox.y + bbox.height > height){
+          d3.select(this).attr("class", "invisible");
+      }
+      else{
+          d3.select(this).attr("class", "visible");
+      }
+    });
+
+}
+
+
+
+function updateBandwidth(scale) {
+  const baseBandwidth = 25;
+  const minScale = 0.25;
+  const maxScale = 10;
+  const minBandwidth = baseBandwidth / 4;
+  const maxBandwidth = baseBandwidth * 4;
+  const bandwidth = d3.interpolate(minBandwidth, maxBandwidth)(scale);
+  return Math.max(bandwidth, minBandwidth);
 }
