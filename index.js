@@ -1,4 +1,5 @@
-
+var stopResizeVar = false;
+var contourBool = false;
 // set the dimensions and margins of the graph
 const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     //width = 350 - margin.left - margin.right,
@@ -258,14 +259,17 @@ function filterPoints(height, width) {
     
     }
     
-
+function resizeDivBool(){
+  stopResizeVar = false;
+}
 
 // Get the main div element
 function resizeDiv(){
-  var isResizing = false;
+
+  if(stopResizeVar){
+    return;
+  }
 var mainDiv = document.getElementById("main");
-
-
 
 // Add event listeners for the mousedown and touchstart events
 mainDiv.addEventListener("mousedown", function(e){startResize(e,mainDiv)});
@@ -276,7 +280,10 @@ mainDiv.addEventListener("touchstart", function(e){startResize(e,mainDiv)});
 function startResize(e, mainDiv) {
   // Prevent default behavior for the mousedown or touchstart event
   e.preventDefault();
+
+  if(!stopResizeVar){
   isResizing = true;
+  }
   
   // Get the initial mouse or touch position and dimensions of the main div
   startX = e.clientX || e.touches[0].clientX;
@@ -284,9 +291,11 @@ function startResize(e, mainDiv) {
   startWidth = mainDiv.offsetWidth;
   startHeight = mainDiv.offsetHeight;
   
+  
   // Add event listeners for the mousemove and touchmove events
   document.addEventListener("mousemove", function(e){ resize(e, mainDiv)});
   document.addEventListener("touchmove", function(e){ resize(e, mainDiv)});
+  
   
   // Add event listeners for the mouseup and touchend events
   document.addEventListener("mouseup", function(e) {stopResize(e, mainDiv)});
@@ -309,7 +318,6 @@ function resize(e, mainDiv) {
   mainDiv.style.height = (startHeight + deltaY) + "px";
   width = (startWidth + deltaX - margin.left - margin.right)/4.5
   height = (startHeight+deltaY - margin.top - margin.bottom)/4.5
-  makeMatrix(height,width,url3);
 }
 
 // Define the stopResize function
@@ -322,6 +330,11 @@ function stopResize(e, mainDiv) {
   // Remove the event listeners for the mousemove and touchmove events
   document.removeEventListener("mousemove", resize);
   document.removeEventListener("touchmove", resize);
+  updateMatrix();
+}
+
+function stopResizeBool(){
+  stopResizeVar = true;
 }
 
 function clearDiv()
@@ -474,9 +487,17 @@ function replaceScatterWithContour(data,data1, data2, id, width, height){
 makeMatrix(height, width, url3);
 
 
+function updateMatrix(){
+  makeMatrix(height,width,url3);
+  if(contourBool){
+  replaceSvg();
+  }
+}
+
 
 function replaceSvg(){
     d3.csv(url3).then(function(data){
         replaceScatterWithContour(data,"x","y", "svg1", width, height)
     })
+    contourBool = true;
 }
