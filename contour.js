@@ -4,11 +4,11 @@ let height = 400;
   // Set up the data
   d3.csv("https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv").then((data) => {
       
-      makeContourPlot(data, "x", "y",width, height, margin);
+      makeContourPlot(data, "x", "y",width, height, margin, "#my_dataviz");
 });
 
 
-function makeContourPlot(data, data1, data2, width, height, margin) {
+function makeContourPlot(data, data1, data2, width, height, margin, id) {
   const maxData1 = findMaxOfArray(data, data1);
   const maxData2 = findMaxOfArray(data, data2);
 
@@ -32,7 +32,7 @@ function makeContourPlot(data, data1, data2, width, height, margin) {
   const contours = contourGenerator(data);
 
   // Add the contours to the chart
-  const svg = d3.select("#my_dataviz").append("svg");
+  const svg = d3.select(id).append("svg");
   svg.attr("width", width).attr("height", height);
 
   svg

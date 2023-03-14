@@ -261,19 +261,22 @@ function filterPoints(height, width) {
 
 
 // Get the main div element
+function resizeDiv(){
+  var isResizing = false;
 var mainDiv = document.getElementById("main");
 
-// Define the variables for resizing
-var startX, startY, startWidth, startHeight;
+
 
 // Add event listeners for the mousedown and touchstart events
-mainDiv.addEventListener("mousedown", startResize);
-mainDiv.addEventListener("touchstart", startResize);
+mainDiv.addEventListener("mousedown", function(e){startResize(e,mainDiv)});
+mainDiv.addEventListener("touchstart", function(e){startResize(e,mainDiv)});
+}
 
 // Define the startResize function
-function startResize(e) {
+function startResize(e, mainDiv) {
   // Prevent default behavior for the mousedown or touchstart event
   e.preventDefault();
+  isResizing = true;
   
   // Get the initial mouse or touch position and dimensions of the main div
   startX = e.clientX || e.touches[0].clientX;
@@ -282,16 +285,21 @@ function startResize(e) {
   startHeight = mainDiv.offsetHeight;
   
   // Add event listeners for the mousemove and touchmove events
-  document.addEventListener("mousemove", resize);
-  document.addEventListener("touchmove", resize);
+  document.addEventListener("mousemove", function(e){ resize(e, mainDiv)});
+  document.addEventListener("touchmove", function(e){ resize(e, mainDiv)});
   
   // Add event listeners for the mouseup and touchend events
-  document.addEventListener("mouseup", stopResize);
-  document.addEventListener("touchend", stopResize);
+  document.addEventListener("mouseup", function(e) {stopResize(e, mainDiv)});
+  document.addEventListener("touchend", function(e) {stopResize(e, mainDiv)});
+
 }
 
 // Define the resize function
-function resize(e) {
+function resize(e, mainDiv) {
+  if(!isResizing){
+    return;
+  }
+
   // Calculate the distance the mouse or touch has moved
   var deltaX = (e.clientX || e.touches[0].clientX) - startX;
   var deltaY = (e.clientY || e.touches[0].clientY) - startY;
@@ -305,25 +313,170 @@ function resize(e) {
 }
 
 // Define the stopResize function
-function stopResize() {
+function stopResize(e, mainDiv) {
+  // Remove the event listeners for the mouseup and touchend events
+  isResizing = false;
+  document.removeEventListener("mouseup", stopResize);
+  document.removeEventListener("touchend", stopResize);
+  
   // Remove the event listeners for the mousemove and touchmove events
   document.removeEventListener("mousemove", resize);
   document.removeEventListener("touchmove", resize);
-  
-  // Remove the event listeners for the mouseup and touchend events
-  document.removeEventListener("mouseup", stopResize);
-  document.removeEventListener("touchend", stopResize);
-
 }
-
-
 
 function clearDiv()
 {
     document.getElementById("main").innerHTML = "";
 }
 
+function makeContourPlot(data, data1, data2, width, height, id) {
+    const maxData1 = findMaxOfArray(data, data1);
+    const maxData2 = findMaxOfArray(data, data2);
+  
+    // Set up the scales
+    const x = d3.scaleLinear()
+              .domain([0, maxData1])
+              .range([0,width]);
+    const y = d3.scaleLinear()
+              .domain([0, maxData2])
+              .range([height,0]);
 
+    //const zScale = d3.scaleLinear().domain([0, 100]).range([0, 255]);
+  
+    // Set up the color scale
+    //const colorScale = d3.scaleSequential(zScale).interpolator(d3.interpolateViridis);
+  
+    // Set up the contour generator
+    const contourGenerator = d3
+      .contourDensity()
+      .x((d) => x(d[data1]))
+      .y((d) => y(d[data2]))
+      .size([width, height])
+      .bandwidth(25);
+  
+    // Generate the contours
+    const contours = contourGenerator(data);
+  
+    // Add the contours to the chart
+    const svg = d3.select("#"+id)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)    
+    .attr("id", ""+id)
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+
+    svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", width/2)
+    .attr("y", height+30)
+    .text(data1);
+
+    svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", -margin.left+20 )
+    .attr("x", -height/2)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text(data2);
+
+    
+    svg
+      .append("g")
+      .classed("x-axis", true)
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(x))
+  
+    // Add y axis
+
+    svg
+      .append("g")
+      .classed("y-axis", true)
+      .call(d3.axisLeft(y))
+  
+  
+    svg
+      .selectAll("path")
+      .data(contours)
+      .enter()
+      .append("path")
+      .attr("d", d3.geoPath())
+      .attr("fill", "none")
+      .attr("stroke", "green")
+      
+  
+
+    let zoom = d3.zoom()
+      .scaleExtent([0.25, 10])
+      .on("zoom", function (e) {
+        handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator);
+      });
+  
+     console.log(svg);
+    svg.call(zoom);
+  }
+
+
+
+  function handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator) {
+    const newXScale = e.transform.rescaleX(x);
+    const newYScale = e.transform.rescaleY(y);
+    
+  
+    // Update the x and y scales based on the rescaled domain of the zoom event
+    newXScale.domain(e.transform.rescaleX(x).domain());
+    newYScale.domain(e.transform.rescaleY(y).domain());
+   
+    xAxis = svg.select(".x-axis");
+    yAxis = svg.select(".y-axis");
+  
+    // Update the x and y scales of the contour generator
+    contourGenerator.x((d) => newXScale(d[data1]));
+    contourGenerator.y((d) => newYScale(d[data2]));
+  
+    // Generate the updated contours
+    const updatedContours = contourGenerator(data);
+  
+    // Select all existing contour paths and bind the updated contours data
+    const contourPaths = svg.selectAll("path").data(updatedContours);
+  
+    // Update existing paths with new data and scales
+    contourPaths
+      .attr("d", d3.geoPath())
+      .attr("fill", "none")
+      .attr("stroke", "green");
+  
+    // Add new paths for any new data points that appear after zooming
+    contourPaths.enter()
+      .append("path")
+      .attr("d", d3.geoPath())
+      .attr("fill", "none")
+      .attr("stroke", "green");
+  
+    // Remove any paths that are no longer needed after zooming
+    contourPaths.exit().remove();
+  
+    // Update the x and y axes with the new scales
+    xAxis.call(d3.axisBottom(newXScale));
+    yAxis.call(d3.axisLeft(newYScale));
+  
+   //filterContours(550)
+  }
+
+
+function replaceScatterWithContour(data,data1, data2, id, width, height){
+   svg = document.getElementById(id).innerHTML="";
+   makeContourPlot(data, data1, data2,width, height, id);
+}
 
 makeMatrix(height, width, url3);
 
+
+
+function replaceSvg(){
+    d3.csv(url3).then(function(data){
+        replaceScatterWithContour(data,"x","y", "svg1", width, height)
+    })
+}
