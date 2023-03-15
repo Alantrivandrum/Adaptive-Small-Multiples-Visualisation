@@ -1,5 +1,5 @@
+
 var stopResizeVar = false;
-var contourBool = false;
 // set the dimensions and margins of the graph
 const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     //width = 350 - margin.left - margin.right,
@@ -19,8 +19,8 @@ let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/ma
 function makeMatrix(height,width, url){
 d3.csv(url).then(function (data) {
         clearDiv();
-        let arrayOfDataPoints = getDatapoints(data);
-    	makeScatterPlot("x", "y", data, "#main", "red","svg1", height,width);
+        //let arrayOfDataPoints = getDatapoints(data);
+    	  makeScatterPlot("x", "y", data, "#main", "red","svg1", height,width);
         makeScatterPlot("x", "z", data, "#main", "green","svg2",height, width);
         makeScatterPlot("x", "carat", data, "#main", "blue","svg3",height, width);
         makeScatterPlot("depth", "y", data, "#main", "red","svg4", height, width);
@@ -39,90 +39,82 @@ d3.csv(url).then(function (data) {
 // x=data1, y = data2 
 function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width){
 
+  const svg = d3.select(cssId)
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)    
+      .attr("id", ""+id)
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    // function initZoom() {
-    // 	d3.select('svg#svg9')
-    // 		.call(zoom);
-    // }
-    
-    
-    
-        const svg = d3.select(cssId)
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)    
-        .attr("id", ""+id)
-        .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
-    
-    
-        // svg.append("g")
-        //     .attr("class", "hidden rectangle")
-        // .append("rect")
-        //     .attr("class", "background")
-        //     .attr("x",0)
-        //     .attr("y",height)
-        //     .attr("width", width)
-        //     .attr("height", 0);
-    
-        svg.append("text")
-        .attr("class", "x label")
-        .attr("text-anchor", "end")
-        .attr("x", width/2)
-        .attr("y", height+30)
-        .text(data1);
-    
-        svg.append("text")
-        .attr("class", "y label")
-        .attr("text-anchor", "end")
-        .attr("y", -margin.left+20 )
-        .attr("x", -height/2)
-        .attr("dy", ".75em")
-        .attr("transform", "rotate(-90)")
-        .text(data2);
-    
-        
-        
-        maxData1 = findMaxOfArray(dataset,data1);
-        maxData2 = findMaxOfArray(dataset,data2);
-    
-        const x = d3.scaleLinear()
-            .domain([0, maxData1])
-            .range([0, width]);
-    
-        gX = svg.append("g")
-            .classed('x-axis', true)
-            .attr("transform", `translate(0, ${height})`)
-            .call(d3.axisBottom(x));
-    
-        // Add Y axis
-        const y = d3.scaleLinear()
-            .domain([0, maxData2])
-            .range([height, 0]);
-    
-        
-        gY = svg.append("g")
-            .classed('y-axis', true) 
-            .call(d3.axisLeft(y));
-    
-            svg.append('g')
-            .selectAll("dot")
-            .data(dataset)
-            .join("circle")
-            .attr("cx", function (d) { return x((d[data1])); })
-            .attr("cy", function (d) { return y(d[data2]); })
-            .attr("r", 3)
-            .style("fill", color)
-            .style("stroke", "black");
-    
-        
-        let zoom = d3.zoom()
-        .scaleExtent([0.25, 10])
-        .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg, height, width)});
-    
-        svg.call(zoom);
-        
-    }
+  // Add labels for x and y axes
+  svg.append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("x", width/2)
+      .attr("y", height+30)
+      .text(data1);
+
+  svg.append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("y", -margin.left+20 )
+      .attr("x", -height/2)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text(data2);
+
+  // Get the maximum value of the data points for x and y axes
+  const maxData1 = findMaxOfArray(dataset, data1);
+  const maxData2 = findMaxOfArray(dataset, data2);
+
+  // Create scales for x and y axes
+  const x = d3.scaleLinear()
+      .domain([0, maxData1])
+      .range([0, width]);
+
+  const y = d3.scaleLinear()
+      .domain([0, maxData2])
+      .range([height, 0]);
+
+  // Create x and y axis groups and append them to the SVG
+  const gX = svg.append("g")
+      .classed('x-axis', true)
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(x));
+
+  const gY = svg.append("g")
+      .classed('y-axis', true) 
+      .call(d3.axisLeft(y));
+
+  // Create circles for each data point and append them to the SVG
+  svg.append('g')
+      .selectAll("dot")
+      .data(dataset)
+      .join("circle")
+      .attr("cx", function (d) { return x((d[data1])); })
+      .attr("cy", function (d) { return y(d[data2]); })
+      .attr("r", 3)
+      .style("fill", color)
+      .style("stroke", "black");
+
+    // Add a rectangle to enable panning and zooming on whitespace
+    const rect = svg.append("rect")
+    .attr("class", "background")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", width)
+    .attr("height", height)
+    .style("fill", "transparent");
+  // Create zoom behavior and apply it to the SVG and the rectangle
+  const zoom = d3.zoom()
+      .scaleExtent([0.25, 10])
+      .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg, height, width)});
+
+  rect.call(zoom);
+}
+
+
 function findMaxOfArray(data, datapoint){
     var max = data[0][datapoint];
     for(var i=1; i<data.length; i++)
@@ -267,6 +259,7 @@ function resizeDivBool(){
 function resizeDiv(){
 
   if(stopResizeVar){
+    stopResize()
     return;
   }
 var mainDiv = document.getElementById("main");
@@ -321,7 +314,7 @@ function resize(e, mainDiv) {
 }
 
 // Define the stopResize function
-function stopResize(e, mainDiv) {
+function stopResize() {
   // Remove the event listeners for the mouseup and touchend events
   isResizing = false;
   document.removeEventListener("mouseup", stopResize);
@@ -330,7 +323,7 @@ function stopResize(e, mainDiv) {
   // Remove the event listeners for the mousemove and touchmove events
   document.removeEventListener("mousemove", resize);
   document.removeEventListener("touchmove", resize);
-  updateMatrix();
+  makeMatrix(height,width,url3);
 }
 
 function stopResizeBool(){
@@ -340,6 +333,7 @@ function stopResizeBool(){
 function clearDiv()
 {
     document.getElementById("main").innerHTML = "";
+    svgExists = false;
 }
 
 function makeContourPlot(data, data1, data2, width, height, id) {
@@ -370,8 +364,10 @@ function makeContourPlot(data, data1, data2, width, height, id) {
     // Generate the contours
     const contours = contourGenerator(data);
   
+
     // Add the contours to the chart
-    const svg = d3.select("#"+id)
+    
+    svg = d3.select("#"+id)
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)    
     .attr("id", ""+id)
@@ -418,6 +414,15 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .attr("d", d3.geoPath())
       .attr("fill", "none")
       .attr("stroke", "green")
+
+    // Add a rectangle to enable panning and zooming on whitespace
+    const rect = svg.append("rect")
+    .attr("class", "background")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", width)
+    .attr("height", height)
+    .style("fill", "transparent");
       
   
 
@@ -427,21 +432,19 @@ function makeContourPlot(data, data1, data2, width, height, id) {
         handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator);
       });
   
-     console.log(svg);
-    svg.call(zoom);
+    rect.call(zoom);
   }
 
 
-
   function handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator) {
+
     const newXScale = e.transform.rescaleX(x);
     const newYScale = e.transform.rescaleY(y);
-    
   
     // Update the x and y scales based on the rescaled domain of the zoom event
     newXScale.domain(e.transform.rescaleX(x).domain());
     newYScale.domain(e.transform.rescaleY(y).domain());
-   
+  
     xAxis = svg.select(".x-axis");
     yAxis = svg.select(".y-axis");
   
@@ -459,7 +462,14 @@ function makeContourPlot(data, data1, data2, width, height, id) {
     contourPaths
       .attr("d", d3.geoPath())
       .attr("fill", "none")
-      .attr("stroke", "green");
+      .attr("stroke", function(d) {
+        // Check if the stroke color is already green
+        if (d3.select(this).attr("stroke") === "green") {
+          return "green"; // Keep green stroke color
+        } else {
+          return "black"; // Set to default stroke color
+        }
+      });
   
     // Add new paths for any new data points that appear after zooming
     contourPaths.enter()
@@ -475,29 +485,28 @@ function makeContourPlot(data, data1, data2, width, height, id) {
     xAxis.call(d3.axisBottom(newXScale));
     yAxis.call(d3.axisLeft(newYScale));
   
-   //filterContours(550)
   }
 
 
 function replaceScatterWithContour(data,data1, data2, id, width, height){
    svg = document.getElementById(id).innerHTML="";
+   svgExists = true;
    makeContourPlot(data, data1, data2,width, height, id);
 }
 
 makeMatrix(height, width, url3);
 
 
-function updateMatrix(){
-  makeMatrix(height,width,url3);
-  if(contourBool){
-  replaceSvg();
-  }
-}
+// function updateMatrix(){
+//   makeMatrix(height,width,url3);
+//   if(contourBool){
+//   replaceSvg();
+//   }
+// }
 
 
 function replaceSvg(){
     d3.csv(url3).then(function(data){
         replaceScatterWithContour(data,"x","y", "svg1", width, height)
     })
-    contourBool = true;
 }
