@@ -291,8 +291,8 @@ function startResize(e, mainDiv) {
   
   
   // Add event listeners for the mouseup and touchend events
-  document.addEventListener("mouseup", function(e) {stopResize(e, mainDiv)});
-  document.addEventListener("touchend", function(e) {stopResize(e, mainDiv)});
+  document.addEventListener("mouseup", function(e) {stopResize(e, mainDiv)}, {once: true});
+  document.addEventListener("touchend", function(e) {stopResize(e, mainDiv)}, {once: true});
 
 }
 
@@ -317,12 +317,13 @@ function resize(e, mainDiv) {
 function stopResize() {
   // Remove the event listeners for the mouseup and touchend events
   isResizing = false;
-  document.removeEventListener("mouseup", stopResize);
+  document.removeEventListener("mouseup",stopResize);
   document.removeEventListener("touchend", stopResize);
   
   // Remove the event listeners for the mousemove and touchmove events
-  document.removeEventListener("mousemove", resize);
-  document.removeEventListener("touchmove", resize);
+  document.removeEventListener("mousemove",resize);
+  document.removeEventListener("touchmove",resize);
+  //document.replaceWith(document.cloneNode(true));
   makeMatrix(height,width,url3);
 }
 
@@ -333,8 +334,9 @@ function stopResizeBool(){
 function clearDiv()
 {
     document.getElementById("main").innerHTML = "";
-    svgExists = false;
 }
+
+
 
 function makeContourPlot(data, data1, data2, width, height, id) {
     const maxData1 = findMaxOfArray(data, data1);
@@ -490,7 +492,6 @@ function makeContourPlot(data, data1, data2, width, height, id) {
 
 function replaceScatterWithContour(data,data1, data2, id, width, height){
    svg = document.getElementById(id).innerHTML="";
-   svgExists = true;
    makeContourPlot(data, data1, data2,width, height, id);
 }
 
@@ -509,4 +510,48 @@ function replaceSvg(){
     d3.csv(url3).then(function(data){
         replaceScatterWithContour(data,"x","y", "svg1", width, height)
     })
+}
+
+
+function brushMatrix(){
+
+  const brush = d3.brush()
+    .extent([[0, 0], [width, height]])
+    .on("brush",function(e) {brushed(e)});
+  
+  for(var i=1; i<10; i++ ){
+  var svg = d3.select("#svg"+i);
+  svg.append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
+      .attr("width", width)
+      .attr("height", height )
+      .call(brush);
+  }
+}
+
+
+function brushed(event) {
+  const selection = event.selection;
+  if (selection) {
+    // Get the selected x and y values
+    const [[x0, y0], [x1, y1]] = selection;
+
+// Filter the data based on the selected values
+//const selectedData = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 && yScale(d.y) >= y0 && yScale(d.y) <= y1);
+
+// // Update the circles in the first scatterplot
+// circles1.attr("fill", d => selectedData.includes(d) ? "blue" : "red");
+
+// // Filter the data based on the selected values
+// const selectedData2 = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 );
+
+// // Update the circles in the second scatterplot
+// circles2.attr("fill", d => selectedData2.includes(d) ? "yellow" : "green");
+// circles2.attr("r", d => selectedData2.includes(d) ? "5" : "4");
+ }
+}
+
+
+function stopBrush(){
+  makeMatrix(height, width, url3)
 }
