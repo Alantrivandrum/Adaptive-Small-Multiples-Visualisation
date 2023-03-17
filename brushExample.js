@@ -91,8 +91,10 @@ d3.csv(url1).then(function(data){
   // Filter the data based on the selected values
   const selectedData = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 && yScale(d.y) >= y0 && yScale(d.y) <= y1);
 
+  //console.log(xScale + " " + yScale);
+
   // Update the circles in the first scatterplot
-  circles1.attr("fill", d => selectedData.includes(d) ? "blue" : "red");
+  circles1.attr("fill", function(d) {if(selectedData.includes(d)){return "blue"} else return "red"});
 
   // Filter the data based on the selected values
   const selectedData2 = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 );
@@ -104,3 +106,4 @@ d3.csv(url1).then(function(data){
 }
 
 });
+

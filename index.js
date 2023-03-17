@@ -1,5 +1,6 @@
 
 var stopResizeVar = false;
+let scalesMap = {};
 // set the dimensions and margins of the graph
 const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     //width = 350 - margin.left - margin.right,
@@ -77,6 +78,9 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
       .domain([0, maxData2])
       .range([height, 0]);
 
+  scalesMap[id+"x"]= x;
+  scalesMap[id+"y"] = y;
+
   // Create x and y axis groups and append them to the SVG
   const gX = svg.append("g")
       .classed('x-axis', true)
@@ -95,8 +99,8 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
       .attr("cx", function (d) { return x((d[data1])); })
       .attr("cy", function (d) { return y(d[data2]); })
       .attr("r", 3)
-      .style("fill", color)
-      .style("stroke", "black");
+      .attr("fill", color)
+      .attr("stroke", "black");
 
     // Add a rectangle to enable panning and zooming on whitespace
     const rect = svg.append("rect")
@@ -109,7 +113,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
   // Create zoom behavior and apply it to the SVG and the rectangle
   const zoom = d3.zoom()
       .scaleExtent([0.25, 10])
-      .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg, height, width)});
+      .on('zoom', function(e){handleZoom(e,x,y,data1,data2,svg, height, width, id)});
 
   rect.call(zoom);
 }
@@ -214,14 +218,16 @@ function buttonFunction2(){
 // 		.call(zoom.translateBy, 50, 0);
 // }
 
-function handleZoom(e, x, y, data1, data2, svg, height, width) {
+function handleZoom(e, x, y, data1, data2, svg, height, width, id) {
     const newXScale = e.transform.rescaleX(x);
     const newYScale = e.transform.rescaleY(y);
 
     // Update the x and y scales based on the rescaled domain of the zoom event
     newXScale.domain(e.transform.rescaleX(x).domain());
     newYScale.domain(e.transform.rescaleY(y).domain());
-   
+
+    scalesMap[id+"x"] = newXScale;
+    scalesMap[id+"y"] = newYScale;
     xAxis = svg.select("g.x-axis");
     yAxis = svg.select("g.y-axis");
 
@@ -515,11 +521,11 @@ function replaceSvg(){
 
 function brushMatrix(){
 
-  const brush = d3.brush()
-    .extent([[0, 0], [width, height]])
-    .on("brush",function(e) {brushed(e)});
-  
+  d3.csv(url3).then(function(data){
   for(var i=1; i<10; i++ ){
+    const brush = d3.brush()
+    .extent([[0, 0], [width, height]])
+    .on("brush",function(e) {brushed(e,data)});
   var svg = d3.select("#svg"+i);
   svg.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`)
@@ -527,28 +533,40 @@ function brushMatrix(){
       .attr("height", height )
       .call(brush);
   }
+});
 }
 
 
-function brushed(event) {
+function brushed(event,data) {
   const selection = event.selection;
   if (selection) {
     // Get the selected x and y values
     const [[x0, y0], [x1, y1]] = selection;
 
+    let circles = d3.select("#svg1 ").selectAll("circle");
+    let circles2 = d3.select("#svg2 ").selectAll("circle");
+    //console.log(circles);
+    xScale = scalesMap["svg1x"];
+    yScale = scalesMap["svg1y"];
+    //xScale2 = scalesMap["svg2x"];
+    
 // Filter the data based on the selected values
-//const selectedData = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 && yScale(d.y) >= y0 && yScale(d.y) <= y1);
+const selectedData = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 && yScale(d.y) >= y0 && yScale(d.y) <= y1);
+const selectedData2 = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1);
+//console.log(selectedData);
 
 // // Update the circles in the first scatterplot
-// circles1.attr("fill", d => selectedData.includes(d) ? "blue" : "red");
+circles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "red");
+//circles.attr("fill", "blue");
+
 
 // // Filter the data based on the selected values
 // const selectedData2 = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 );
 
 // // Update the circles in the second scatterplot
-// circles2.attr("fill", d => selectedData2.includes(d) ? "yellow" : "green");
+ circles2.attr("fill", d => selectedData2.map(e => e.id).includes(d.id) ? "yellow" : "green");
 // circles2.attr("r", d => selectedData2.includes(d) ? "5" : "4");
- }
+ }  
 }
 
 
