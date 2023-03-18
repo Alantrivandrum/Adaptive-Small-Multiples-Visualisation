@@ -230,6 +230,13 @@ function handleZoom(e, x, y, data1, data2, svg, height, width, id) {
     const newXScale = e.transform.rescaleX(x);
     const newYScale = e.transform.rescaleY(y);
 
+    if(e.transform.k==0.25){
+    d3.csv(url).then(function(data){
+      replaceScatterWithContour(data,data1,data2,id,width,height);
+    })
+    }
+    
+
     // Update the x and y scales based on the rescaled domain of the zoom event
     newXScale.domain(e.transform.rescaleX(x).domain());
     newYScale.domain(e.transform.rescaleY(y).domain());
