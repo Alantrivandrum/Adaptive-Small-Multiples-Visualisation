@@ -106,9 +106,10 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
       .join("circle")
       .attr("cx", function (d) { return x((d[data1])); })
       .attr("cy", function (d) { return y(d[data2]); })
-      .attr("r", 2)
+      .attr("r", 2.5)
       .attr("fill", color)
-      .attr("stroke", "black");
+      .attr("stroke", "black")
+      .attr("stroke-width", 0.5);
 
     // Add a rectangle to enable panning and zooming on whitespace
     const rect = svg.append("rect")
@@ -230,7 +231,7 @@ function handleZoom(e, x, y, data1, data2, svg, height, width, id) {
     const newXScale = e.transform.rescaleX(x);
     const newYScale = e.transform.rescaleY(y);
 
-    if(e.transform.k==0.25){
+    if(e.transform.k<=0.5){
     d3.csv(url).then(function(data){
       replaceScatterWithContour(data,data1,data2,id,width,height);
     })
@@ -390,7 +391,7 @@ function makeContourPlot(data, data1, data2, width, height, id) {
 
     // Add the contours to the chart
     
-    svg = d3.select("#"+id)
+    let svg = d3.select("#"+id)
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)    
     .attr("id", ""+id)
@@ -530,6 +531,14 @@ makeMatrix(height, width, url);
 function replaceSvg(){
     d3.csv(url).then(function(data){
         replaceScatterWithContour(data,"x","y", "svg1", width, height)
+        replaceScatterWithContour(data,"x","z", "svg2", width, height)
+        replaceScatterWithContour(data,"x","carat", "svg3", width, height)
+        replaceScatterWithContour(data,"depth","y", "svg4", width, height)
+        replaceScatterWithContour(data,"depth","z", "svg5", width, height)
+        replaceScatterWithContour(data,"depth","carat", "svg6", width, height)
+        replaceScatterWithContour(data,"table","y", "svg7", width, height)
+        replaceScatterWithContour(data,"table","z", "svg8", width, height)
+        replaceScatterWithContour(data,"table","carat", "svg9", width, height)
     })
 }
 
@@ -630,11 +639,11 @@ xCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "yellow
 yCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "grey");
 yCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "grey");
 
-circles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
-xCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
-xCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2")
-yCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
-yCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
+circles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+xCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+xCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5")
+yCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+yCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
  }  
 }
 
