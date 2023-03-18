@@ -91,11 +91,13 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
   const gX = svg.append("g")
       .classed('x-axis', true)
       .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x).ticks(6));
+
 
   const gY = svg.append("g")
       .classed('y-axis', true) 
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).ticks(7));
+      
 
   // Create circles for each data point and append them to the SVG
   svg.append('g')
@@ -410,14 +412,14 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .append("g")
       .classed("x-axis", true)
       .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x).ticks(7))
   
     // Add y axis
 
     svg
       .append("g")
       .classed("y-axis", true)
-      .call(d3.axisLeft(y))
+      .call(d3.axisLeft(y).ticks(7))
   
   
     svg
@@ -536,12 +538,12 @@ function brushMatrix(){
         }
       }
       const brush = d3.brush()
-        .extent([[0, 0], [width, height]])
+        .extent([[0, 0], [width+margin.left+margin.right, height+margin.top+margin.bottom]])
         .on("brush", brushedFn(`svg${i}`));
       svg.append("g")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)   
         .attr("transform", `translate(${margin.left}, ${margin.top})`)
-        .attr("width", width)
-        .attr("height", height )
         .call(brush);
     }
   });
