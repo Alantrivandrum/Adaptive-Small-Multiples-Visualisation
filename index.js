@@ -1,6 +1,8 @@
 
+
 var stopResizeVar = false;
 let scalesMap = {};
+let dataTypeMap = {};
 // set the dimensions and margins of the graph
 const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     //width = 350 - margin.left - margin.right,
@@ -8,11 +10,13 @@ const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     let width = document.getElementById("main").offsetWidth/4.5;
     let height = document.getElementById("main").offsetHeight/4.5;
 
-    
-//Read the data
+
+
 let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv";
 let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
 let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
+    
+let url = url3;
 
 
 
@@ -21,15 +25,15 @@ function makeMatrix(height,width, url){
 d3.csv(url).then(function (data) {
         clearDiv();
         //let arrayOfDataPoints = getDatapoints(data);
-    	  makeScatterPlot("x", "y", data, "#main", "red","svg1", height,width);
-        makeScatterPlot("x", "z", data, "#main", "green","svg2",height, width);
-        makeScatterPlot("x", "carat", data, "#main", "blue","svg3",height, width);
-        makeScatterPlot("depth", "y", data, "#main", "red","svg4", height, width);
-        makeScatterPlot("depth", "z", data, "#main", "green","svg5", height, width);
-        makeScatterPlot("depth", "carat", data, "#main", "blue","svg6", height, width);
-        makeScatterPlot("table", "y", data, "#main", "red","svg7", height, width);
-        makeScatterPlot("table", "z", data, "#main", "green","svg8", height, width);
-        makeScatterPlot("table", "carat", data, "#main", "blue","svg9", height, width);
+    	  makeScatterPlot("x", "y", data, "#main", "grey","svg1", height,width);
+        makeScatterPlot("x", "z", data, "#main", "grey","svg2",height, width);
+        makeScatterPlot("x", "carat", data, "#main", "grey","svg3",height, width);
+        makeScatterPlot("depth", "y", data, "#main", "grey","svg4", height, width);
+        makeScatterPlot("depth", "z", data, "#main", "grey","svg5", height, width);
+        makeScatterPlot("depth", "carat", data, "#main", "grey","svg6", height, width);
+        makeScatterPlot("table", "y", data, "#main", "grey","svg7", height, width);
+        makeScatterPlot("table", "z", data, "#main", "grey","svg8", height, width);
+        makeScatterPlot("table", "carat", data, "#main", "grey","svg9", height, width);
         //createButtons(arrayOfDataPoints);
 
 })
@@ -40,6 +44,8 @@ d3.csv(url).then(function (data) {
 // x=data1, y = data2 
 function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width){
 
+  dataTypeMap[id+"x"] = data1;
+  dataTypeMap[id+"y"] = data2;
   const svg = d3.select(cssId)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -98,7 +104,7 @@ function makeScatterPlot(data1 ,data2, dataset, cssId, color, id , height, width
       .join("circle")
       .attr("cx", function (d) { return x((d[data1])); })
       .attr("cy", function (d) { return y(d[data2]); })
-      .attr("r", 3)
+      .attr("r", 2)
       .attr("fill", color)
       .attr("stroke", "black");
 
@@ -150,14 +156,14 @@ function getDatapoints(data){
 
 function buttonFunction1(){
     document.getElementById("my_dataviz").innerHTML = "";
-    d3.csv(url3).then(function (data) {
+    d3.csv(url).then(function (data) {
     makeScatterPlot("z", "y", data, "#my_dataviz", "green");
     })
 }
 
 function buttonFunction2(){
     document.getElementById("my_dataviz").innerHTML = "";
-    d3.csv(url3).then(function (data) {
+    d3.csv(url).then(function (data) {
     makeScatterPlot("x", "y", data, "#my_dataviz", "red");
     })
 }
@@ -330,7 +336,7 @@ function stopResize() {
   document.removeEventListener("mousemove",resize);
   document.removeEventListener("touchmove",resize);
   //document.replaceWith(document.cloneNode(true));
-  makeMatrix(height,width,url3);
+  makeMatrix(height,width,url);
 }
 
 function stopResizeBool(){
@@ -501,7 +507,7 @@ function replaceScatterWithContour(data,data1, data2, id, width, height){
    makeContourPlot(data, data1, data2,width, height, id);
 }
 
-makeMatrix(height, width, url3);
+makeMatrix(height, width, url);
 
 
 // function updateMatrix(){
@@ -513,7 +519,7 @@ makeMatrix(height, width, url3);
 
 
 function replaceSvg(){
-    d3.csv(url3).then(function(data){
+    d3.csv(url).then(function(data){
         replaceScatterWithContour(data,"x","y", "svg1", width, height)
     })
 }
@@ -521,55 +527,109 @@ function replaceSvg(){
 
 function brushMatrix(){
 
-  d3.csv(url3).then(function(data){
-  for(var i=1; i<10; i++ ){
-    const brush = d3.brush()
-    .extent([[0, 0], [width, height]])
-    .on("brush",function(e) {brushed(e,data)});
-  var svg = d3.select("#svg"+i);
-  svg.append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`)
-      .attr("width", width)
-      .attr("height", height )
-      .call(brush);
-  }
-});
+  d3.csv(url).then(function(data){
+    for(var i=1; i<=9; i++ ){
+      var svg = d3.select("#svg"+i);
+      const brushedFn = function(id) {
+        return function(e) {
+          brushed(e, data, id);
+        }
+      }
+      const brush = d3.brush()
+        .extent([[0, 0], [width, height]])
+        .on("brush", brushedFn(`svg${i}`));
+      svg.append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`)
+        .attr("width", width)
+        .attr("height", height )
+        .call(brush);
+    }
+  });
 }
 
 
-function brushed(event,data) {
+function brushed(event,data,id) {
   const selection = event.selection;
+  var linkedXSvgs = [];
+  var linkedYSvgs = [];
+
+  if(id == "svg1"){
+    linkedXSvgs = ["svg2","svg3"];
+    linkedYSvgs = ["svg4", "svg7"];
+  }
+  
+  if(id == "svg2"){
+    linkedXSvgs = ["svg1","svg3"];
+    linkedYSvgs = ["svg5", "svg8"];
+  }
+  
+  if(id == "svg3"){
+    linkedXSvgs = ["svg1","svg2"];
+    linkedYSvgs = ["svg6", "svg9"];
+  }
+  if(id == "svg4"){
+    linkedXSvgs = ["svg5","svg6"];
+    linkedYSvgs = ["svg1", "svg7"];
+  }
+  if(id == "svg5"){
+    linkedXSvgs = ["svg4","svg6"];
+    linkedYSvgs = ["svg2", "svg8"];
+  }
+  if(id == "svg6"){
+    linkedXSvgs = ["svg4","svg5"];
+    linkedYSvgs = ["svg3", "svg9"];
+  }
+  if(id == "svg7"){
+    linkedXSvgs = ["svg8","svg9"];
+    linkedYSvgs = ["svg1", "svg4"];
+  }
+  if(id == "svg8"){
+    linkedXSvgs = ["svg7","svg9"];
+    linkedYSvgs = ["svg2", "svg5"];
+  }
+  if(id == "svg9"){
+    linkedXSvgs = ["svg7","svg8"];
+    linkedYSvgs = ["svg3", "svg6"];
+  }
+
+
   if (selection) {
     // Get the selected x and y values
     const [[x0, y0], [x1, y1]] = selection;
+    let circles = d3.select("#"+id).selectAll("circle");
+    let xCircles = d3.select("#"+linkedXSvgs[0]).selectAll("circle");
+    let xCircles2 = d3.select("#"+linkedXSvgs[1]).selectAll("circle");
+    let yCircles = d3.select("#"+linkedYSvgs[0]).selectAll("circle");
+    let yCircles2 = d3.select("#"+linkedYSvgs[1]).selectAll("circle");
 
-    let circles = d3.select("#svg1 ").selectAll("circle");
-    let circles2 = d3.select("#svg2 ").selectAll("circle");
+
     //console.log(circles);
-    xScale = scalesMap["svg1x"];
-    yScale = scalesMap["svg1y"];
+    xScale = scalesMap[id+"x"];
+    yScale = scalesMap[id+"y"];
+    xValue = dataTypeMap[id+"x"];
+    yValue = dataTypeMap[id+"y"];
     //xScale2 = scalesMap["svg2x"];
     
 // Filter the data based on the selected values
-const selectedData = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 && yScale(d.y) >= y0 && yScale(d.y) <= y1);
-const selectedData2 = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1);
-//console.log(selectedData);
-
+const selectedData = data.filter(d => xScale(d[xValue]) >= x0 && xScale(d[xValue]) <= x1 && yScale(d[yValue]) >= y0 && yScale(d[yValue]) <= y1);
+//const selectedData2 = data.filter(d => xScale(d["x"]) >= x0 && xScale(d["x"]) <= x1 && yScale(d["z"]) >= y0 && yScale(d["z"]) <= y1);
+//const selectedData3 = data.filter(d => xScale(d["x"]) >= x0 && xScale(d["x"]) <= x1 && yScale(d["carat"]) >= y0 && yScale(d["carat"]) <= y1);
 // // Update the circles in the first scatterplot
-circles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "red");
-//circles.attr("fill", "blue");
+circles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "green" : "grey");
+xCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "yellow" : "grey");
+xCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "yellow" : "grey")
+yCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "grey");
+yCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "grey");
 
-
-// // Filter the data based on the selected values
-// const selectedData2 = data.filter(d => xScale(d.x) >= x0 && xScale(d.x) <= x1 );
-
-// // Update the circles in the second scatterplot
- circles2.attr("fill", d => selectedData2.map(e => e.id).includes(d.id) ? "yellow" : "green");
-// circles2.attr("r", d => selectedData2.includes(d) ? "5" : "4");
+circles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
+xCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
+xCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2")
+yCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
+yCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2");
  }  
 }
 
 
 function stopBrush(){
-  makeMatrix(height, width, url3)
+  makeMatrix(height, width, url)
 }
