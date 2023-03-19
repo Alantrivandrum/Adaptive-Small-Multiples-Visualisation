@@ -457,6 +457,8 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       });
   
     rect.call(zoom);
+    svg.select(".x-axis").raise();
+    svg.select(".y-axis").raise();
   }
 
 
@@ -650,4 +652,24 @@ yCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5
 
 function stopBrush(){
   makeMatrix(height, width, url)
+}
+
+
+function setUrl500(){
+    url = url3;
+    makeMatrix(height,width,url)
+}
+
+function setUrl1000(){
+
+}
+
+
+function setUrl5000(){
+
+}
+
+function setUrlFull(){
+  url = url1;
+  makeMatrix(height,width,url)
 }
