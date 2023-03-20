@@ -13,8 +13,9 @@ const margin = { top: 10, right: 30, bottom: 50, left: 60 };
 
 
 let url1 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds.csv";
-let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds%20reduced.csv";
+let url2 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds1000.csv";
 let url3 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds500.csv";
+let url4 = "https://raw.githubusercontent.com/Alantrivandrum/Diamonds-Dataset/main/diamonds5000.csv";
     
 let url = url3;
 
@@ -661,12 +662,14 @@ function setUrl500(){
 }
 
 function setUrl1000(){
-
+  url = url2;
+  makeMatrix(height,width,url)
 }
 
 
 function setUrl5000(){
-
+  url = url4;
+  makeMatrix(height,width,url)
 }
 
 function setUrlFull(){
