@@ -3,6 +3,7 @@
 var stopResizeVar = false;
 let scalesMap = {};
 let dataTypeMap = {};
+var color = d3.rgb(100,150,100);
 // set the dimensions and margins of the graph
 const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     //width = 350 - margin.left - margin.right,
@@ -26,15 +27,15 @@ function makeMatrix(height,width, url){
 d3.csv(url).then(function (data) {
         clearDiv();
         //let arrayOfDataPoints = getDatapoints(data);
-    	  makeScatterPlot("x", "y", data, "#main", "grey","svg1", height,width);
-        makeScatterPlot("x", "z", data, "#main", "grey","svg2",height, width);
-        makeScatterPlot("x", "carat", data, "#main", "grey","svg3",height, width);
-        makeScatterPlot("depth", "y", data, "#main", "grey","svg4", height, width);
-        makeScatterPlot("depth", "z", data, "#main", "grey","svg5", height, width);
-        makeScatterPlot("depth", "carat", data, "#main", "grey","svg6", height, width);
-        makeScatterPlot("table", "y", data, "#main", "grey","svg7", height, width);
-        makeScatterPlot("table", "z", data, "#main", "grey","svg8", height, width);
-        makeScatterPlot("table", "carat", data, "#main", "grey","svg9", height, width);
+    	  makeScatterPlot("x", "y", data, "#main", color,"svg1", height,width);
+        makeScatterPlot("x", "z", data, "#main", color,"svg2",height, width);
+        makeScatterPlot("x", "carat", data, "#main", color,"svg3",height, width);
+        makeScatterPlot("depth", "y", data, "#main", color,"svg4", height, width);
+        makeScatterPlot("depth", "z", data, "#main", color,"svg5", height, width);
+        makeScatterPlot("depth", "carat", data, "#main", color,"svg6", height, width);
+        makeScatterPlot("table", "y", data, "#main", color,"svg7", height, width);
+        makeScatterPlot("table", "z", data, "#main", color,"svg8", height, width);
+        makeScatterPlot("table", "carat", data, "#main", color,"svg9", height, width);
         //createButtons(arrayOfDataPoints);
 
 })
@@ -636,11 +637,11 @@ const selectedData = data.filter(d => xScale(d[xValue]) >= x0 && xScale(d[xValue
 //const selectedData2 = data.filter(d => xScale(d["x"]) >= x0 && xScale(d["x"]) <= x1 && yScale(d["z"]) >= y0 && yScale(d["z"]) <= y1);
 //const selectedData3 = data.filter(d => xScale(d["x"]) >= x0 && xScale(d["x"]) <= x1 && yScale(d["carat"]) >= y0 && yScale(d["carat"]) <= y1);
 // // Update the circles in the first scatterplot
-circles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "green" : "grey");
-xCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "yellow" : "grey");
-xCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "yellow" : "grey")
-yCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "grey");
-yCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : "grey");
+circles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "purple" : color);
+xCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "red" : color);
+xCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "red" : color)
+yCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+yCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
 
 circles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
 xCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
