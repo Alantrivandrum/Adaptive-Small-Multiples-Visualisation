@@ -385,7 +385,7 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .x((d) => x(d[data1]))
       .y((d) => y(d[data2]))
       .size([width, height])
-      .bandwidth(25);
+      .bandwidth(5);
   
     // Generate the contours
     const contours = contourGenerator(data);
@@ -439,7 +439,7 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .append("path")
       .attr("d", d3.geoPath())
       .attr("fill", "none")
-      .attr("stroke", "green")
+      .attr("stroke", "pink")
 
     // Add a rectangle to enable panning and zooming on whitespace
     const rect = svg.append("rect")
@@ -492,8 +492,8 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .attr("fill", "none")
       .attr("stroke", function(d) {
         // Check if the stroke color is already green
-        if (d3.select(this).attr("stroke") === "green") {
-          return "green"; // Keep green stroke color
+        if (d3.select(this).attr("stroke") === "pink") {
+          return "pink"; // Keep green stroke color
         } else {
           return "black"; // Set to default stroke color
         }
@@ -504,7 +504,7 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .append("path")
       .attr("d", d3.geoPath())
       .attr("fill", "none")
-      .attr("stroke", "green");
+      .attr("stroke", "pink");
   
     // Remove any paths that are no longer needed after zooming
     contourPaths.exit().remove();
@@ -572,46 +572,36 @@ function brushMatrix(){
 
 function brushed(event,data,id) {
   const selection = event.selection;
-  var linkedXSvgs = [];
-  var linkedYSvgs = [];
+  var linkedSvgs = [];
 
   if(id == "svg1"){
-    linkedXSvgs = ["svg2","svg3"];
-    linkedYSvgs = ["svg4", "svg7"];
+    linkedSvgs= ["svg2","svg3","svg4","svg5","svg6","svg7","svg8","svg9"];
   }
   
   if(id == "svg2"){
-    linkedXSvgs = ["svg1","svg3"];
-    linkedYSvgs = ["svg5", "svg8"];
+    linkedSvgs=["svg1","svg3","svg4","svg5","svg6","svg7","svg8","svg9"];
   }
   
   if(id == "svg3"){
-    linkedXSvgs = ["svg1","svg2"];
-    linkedYSvgs = ["svg6", "svg9"];
+    linkedSvgs=["svg2","svg1","svg4","svg5","svg6","svg7","svg8","svg9"];
   }
   if(id == "svg4"){
-    linkedXSvgs = ["svg5","svg6"];
-    linkedYSvgs = ["svg1", "svg7"];
+    linkedSvgs=["svg2","svg3","svg1","svg5","svg6","svg7","svg8","svg9"];
   }
   if(id == "svg5"){
-    linkedXSvgs = ["svg4","svg6"];
-    linkedYSvgs = ["svg2", "svg8"];
+    linkedSvgs=["svg2","svg3","svg4","svg1","svg6","svg7","svg8","svg9"];
   }
   if(id == "svg6"){
-    linkedXSvgs = ["svg4","svg5"];
-    linkedYSvgs = ["svg3", "svg9"];
+    linkedSvgs=["svg2","svg3","svg4","svg5","svg1","svg7","svg8","svg9"];
   }
   if(id == "svg7"){
-    linkedXSvgs = ["svg8","svg9"];
-    linkedYSvgs = ["svg1", "svg4"];
+    linkedSvgs=["svg2","svg3","svg4","svg5","svg6","svg1","svg8","svg9"];
   }
   if(id == "svg8"){
-    linkedXSvgs = ["svg7","svg9"];
-    linkedYSvgs = ["svg2", "svg5"];
+    linkedSvgs=["svg2","svg3","svg4","svg5","svg6","svg7","svg1","svg9"];
   }
   if(id == "svg9"){
-    linkedXSvgs = ["svg7","svg8"];
-    linkedYSvgs = ["svg3", "svg6"];
+    linkedSvgs=["svg2","svg3","svg4","svg5","svg6","svg7","svg8","svg1"];
   }
 
 
@@ -619,10 +609,14 @@ function brushed(event,data,id) {
     // Get the selected x and y values
     const [[x0, y0], [x1, y1]] = selection;
     let circles = d3.select("#"+id).selectAll("circle");
-    let xCircles = d3.select("#"+linkedXSvgs[0]).selectAll("circle");
-    let xCircles2 = d3.select("#"+linkedXSvgs[1]).selectAll("circle");
-    let yCircles = d3.select("#"+linkedYSvgs[0]).selectAll("circle");
-    let yCircles2 = d3.select("#"+linkedYSvgs[1]).selectAll("circle");
+    let circles2 = d3.select("#"+linkedSvgs[0]).selectAll("circle");
+    let circles3 = d3.select("#"+linkedSvgs[1]).selectAll("circle");
+    let circles4 = d3.select("#"+linkedSvgs[2]).selectAll("circle");
+    let circles5 = d3.select("#"+linkedSvgs[3]).selectAll("circle");
+    let circles6 = d3.select("#"+linkedSvgs[4]).selectAll("circle");
+    let circles7 = d3.select("#"+linkedSvgs[5]).selectAll("circle");
+    let circles8 = d3.select("#"+linkedSvgs[6]).selectAll("circle");
+    let circles9 = d3.select("#"+linkedSvgs[7]).selectAll("circle");
 
 
     //console.log(circles);
@@ -637,17 +631,25 @@ const selectedData = data.filter(d => xScale(d[xValue]) >= x0 && xScale(d[xValue
 //const selectedData2 = data.filter(d => xScale(d["x"]) >= x0 && xScale(d["x"]) <= x1 && yScale(d["z"]) >= y0 && yScale(d["z"]) <= y1);
 //const selectedData3 = data.filter(d => xScale(d["x"]) >= x0 && xScale(d["x"]) <= x1 && yScale(d["carat"]) >= y0 && yScale(d["carat"]) <= y1);
 // // Update the circles in the first scatterplot
-circles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "purple" : color);
-xCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "red" : color);
-xCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "red" : color)
-yCircles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
-yCircles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles2.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles3.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles4.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles5.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles6.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles7.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles8.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
+circles9.attr("fill", d => selectedData.map(e => e.id).includes(d.id) ? "blue" : color);
 
 circles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
-xCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
-xCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5")
-yCircles.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
-yCircles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles2.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles3.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles4.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles5.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles6.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles7.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles8.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
+circles9.attr("r", d => selectedData.map(e => e.id).includes(d.id) ? "4" : "2.5");
  }  
 }
 
