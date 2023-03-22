@@ -4,6 +4,8 @@ var stopResizeVar = false;
 let scalesMap = {};
 let dataTypeMap = {};
 var color = d3.rgb(100,150,100);
+var color2  = d3.rgb(100,250,100);
+
 // set the dimensions and margins of the graph
 const margin = { top: 10, right: 30, bottom: 50, left: 60 };
     //width = 350 - margin.left - margin.right,
@@ -385,7 +387,7 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .x((d) => x(d[data1]))
       .y((d) => y(d[data2]))
       .size([width, height])
-      .bandwidth(5);
+      .bandwidth(7);
   
     // Generate the contours
     const contours = contourGenerator(data);
@@ -439,7 +441,7 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .append("path")
       .attr("d", d3.geoPath())
       .attr("fill", "none")
-      .attr("stroke", "pink")
+      .attr("stroke", color2)
 
     // Add a rectangle to enable panning and zooming on whitespace
     const rect = svg.append("rect")
@@ -492,8 +494,8 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .attr("fill", "none")
       .attr("stroke", function(d) {
         // Check if the stroke color is already green
-        if (d3.select(this).attr("stroke") === "pink") {
-          return "pink"; // Keep green stroke color
+        if (d3.select(this).attr("stroke") == color2) {
+          return color2; // Keep green stroke color
         } else {
           return "black"; // Set to default stroke color
         }
@@ -504,7 +506,7 @@ function makeContourPlot(data, data1, data2, width, height, id) {
       .append("path")
       .attr("d", d3.geoPath())
       .attr("fill", "none")
-      .attr("stroke", "pink");
+      .attr("stroke", color2);
   
     // Remove any paths that are no longer needed after zooming
     contourPaths.exit().remove();
