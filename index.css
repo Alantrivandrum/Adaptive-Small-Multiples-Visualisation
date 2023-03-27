@@ -121,4 +121,14 @@ transition-property: color, background-color, border-color;
 
 #buttons{
   padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+
+.dropdown-label {
+  margin-left: 10px;
+}
+
+#submit-button2{
+  margin-left: 10px;
 }
