@@ -701,13 +701,25 @@ function setUrlFull() {
 d3.select("#submit-button")
   .on("click", function () {
     url = d3.select("#url-input").node().value;
-    //console.log(url);
-
-    //console.log(d3.csv(url));
-    clearDropDowns();
-    d3.csv(url).then(function (data) {
-      addDropdownValues(data);
-    });
+    
+    // Use Fetch API to make a request to the URL and check the response status
+    fetch(url, { method: 'HEAD' })
+      .then(response => {
+        if (response.ok) {
+          // If response status is OK (2xx), load the data with d3.csv()
+          clearDropDowns();
+          d3.csv(url).then(function (data) {
+            addDropdownValues(data);
+          });
+        } else {
+          // If response status is not OK, alert the user
+          alert("Data cannot be accessed from this URL.");
+        }
+      })
+      .catch(error => {
+        // If an error occurs, alert the user
+        alert("Error: Unable to access data at this url or url is not valid");
+      });
   });
 
 
