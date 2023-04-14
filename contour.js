@@ -114,17 +114,24 @@ function handleZoomContour(e, x, y, data, data1, data2, svg, contourGenerator) {
   contourGenerator.x((d) => newXScale(d[data1]));
   contourGenerator.y((d) => newYScale(d[data2]));
 
-  // Generate the updated contours
-  const updatedContours = contourGenerator(data);
+   // Generate the updated contours
+   const updatedContours = contourGenerator(data);
 
-  // Select all existing contour paths and bind the updated contours data
-  const contourPaths = svg.selectAll("path").data(updatedContours);
-
-  // Update existing paths with new data and scales
-  contourPaths
-    .attr("d", d3.geoPath())
-    .attr("fill", "none")
-    .attr("stroke", "green");
+   // Select all existing contour paths and bind the updated contours data
+   const contourPaths = svg.selectAll("path").data(updatedContours);
+ 
+   // Update existing paths with new data and scales
+   contourPaths
+     .attr("d", d3.geoPath())
+     .attr("fill", "none")
+     .attr("stroke", function (d) {
+       // Check if the stroke color is already green
+       if (d3.select(this).attr("stroke") == color2) {
+         return color2; // Keep green stroke color
+       } else {
+         return "black"; // Set to default stroke color
+       }
+     });
 
   // Add new paths for any new data points that appear after zooming
   contourPaths.enter()

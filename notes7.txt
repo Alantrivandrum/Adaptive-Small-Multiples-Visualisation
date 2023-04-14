@@ -1,0 +1,7 @@
+locking column/row based on zoom and pan / brushing (done)
+fix contour plot going out of bounds (need to try to do)
+change to contour based on density of points in the area of subplot, when zoomed out too much replace with contour (done)
+make the html take in a url and generalise function to suit any dataset/maybe add buttons for choosing the datasets (nearly done)
+decrease ticks for resize maybe ? (done)
+add contour functionality for all of the subplots (done)
+Fix colour scheme of visualisation (need to do)
