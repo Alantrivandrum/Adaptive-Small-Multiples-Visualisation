@@ -1,5 +1,7 @@
 
 var stopResizeVar = false;
+var startTime =0;
+var endTime = 0;
 let scalesMap = {};
 let dataTypeMap = {};
 var color = d3.rgb(100, 150, 100);
@@ -26,6 +28,7 @@ let url = url3;
 
 
 function makeMatrix(height, width, url) {
+  startTime = performance.now();
   d3.csv(url).then(function (data) {
     clearDiv();
     data = addIdAttribute(data);
@@ -47,6 +50,9 @@ function makeMatrix(height, width, url) {
     //createButtons(arrayOfDataPoints);
 
   })
+  endTime = performance.now();
+  timetaken = endTime - startTime;
+  console.log("Time taken: " + timetaken);
 }
 
 
